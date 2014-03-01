@@ -31,12 +31,11 @@
 
     <h1>Reports</h1>
 
-    <p>
-    <ul>
-        <li>Future Report Here</li>
-        <li>Future Report Here</li>
-    </ul>
-    </p>
+    <h1>Add a File for testing</h1>
+    <form method="post" action="/ivr/add" class="well form-vertical" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <button type="submit" class="btn">Submit</button>
+    </form>
 
     <hr>
 

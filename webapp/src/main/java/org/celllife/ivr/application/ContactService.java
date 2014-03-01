@@ -2,6 +2,8 @@ package org.celllife.ivr.application;
 
 import org.celllife.ivr.domain.Contact;
 
+import java.util.List;
+
 public interface ContactService {
 
     public Iterable<Contact> getAllContacts();
@@ -9,5 +11,7 @@ public interface ContactService {
     public void saveContact(Contact contact);
 
     public void deleteAll();
+
+    public void saveContacts(List<Contact> contacts);
 
 }

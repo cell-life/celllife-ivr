@@ -17,6 +17,8 @@ public class Contact {
 
     private int progress = 0;
 
+    private Long campaignId;
+
     public Contact() {
 
     }

@@ -1,10 +1,6 @@
 package org.celllife.ivr.test;
 
-import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
 @ContextConfiguration({
@@ -21,7 +17,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
         "classpath:/META-INF/spring/spring-task.xml",
         "classpath:/META-INF/spring/spring-tx.xml",
         "classpath:/META-INF/spring-data/spring-data-jpa.xml",
-        "classpath:/META-INF/spring-integration/spring-integration-core.xml"
+        "classpath:/META-INF/spring-integration/spring-integration-core.xml",
+        "classpath:/META-INF/spring-integration/spring-integration-verboice.xml",
 })
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class TestConfiguration {
