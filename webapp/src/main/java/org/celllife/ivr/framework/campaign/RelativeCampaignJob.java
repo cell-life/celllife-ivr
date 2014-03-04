@@ -1,11 +1,10 @@
 package org.celllife.ivr.framework.campaign;
 
-import org.apache.commons.collections.IteratorUtils;
+import org.celllife.ivr.application.CampaignMessageService;
+import org.celllife.ivr.application.CampaignService;
+import org.celllife.ivr.application.ContactService;
 import org.celllife.ivr.application.VerboiceApplicationService;
-import org.celllife.ivr.domain.Campaign;
-import org.celllife.ivr.domain.CampaignRepository;
-import org.celllife.ivr.domain.Contact;
-import org.celllife.ivr.domain.ContactRepository;
+import org.celllife.ivr.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +21,26 @@ public class RelativeCampaignJob {
     private static final Logger log = LoggerFactory.getLogger(RelativeCampaignJob.class);
 
     @Autowired
-    private CampaignRepository campaignRepository;
+    private CampaignService campaignService;
 
     @Autowired
-    private ContactRepository contactRepository;
+    private ContactService contactService;
+
+    @Autowired
+    private CampaignMessageService campaignMessageService;
 
     @Autowired
     private VerboiceApplicationService verboiceApplicationService;
 
     public void sendMessagesForCampaign(Long campaignId, Long userId, Integer msgSlot, Date msgTime) {
 
-        Campaign campaign = null;
+        Campaign campaign = campaignService.getCampaign(campaignId);
 
         try {
-            campaign = campaignRepository.findOne(campaignId);
 
             switch (campaign.getType()) {
                 case DAILY:
-                    processDailyCampaign(campaign, campaignId, msgSlot, msgTime);
+                    processDailyCampaign(campaignId, msgSlot, msgTime);
                     break;
                 case FLEXI:
                     //processFlexiCampaign(campaign, msgTime);  FIXME: need to implement this
@@ -55,21 +56,32 @@ public class RelativeCampaignJob {
         }
     }
 
-    private void processDailyCampaign(Campaign campaign, Long campaignId, Integer msgSlot, Date msgTime) throws Exception {
+    private void processDailyCampaign(Long campaignId, Integer messageSlot, Date messageTime) throws Exception {
 
-        List<Contact> campaignContacts = IteratorUtils.toList(contactRepository.findContactsInCampaign(campaignId).iterator());
+        Campaign campaign = campaignService.getCampaign(campaignId);
 
-        int totalContacts = campaignContacts.size();
-        log.info("sending messages for relative campaign: [id={}], [msgSlot={}], [msgTime={}], [totalContacts={}]",
-                new Object[]{campaignId, msgSlot, msgTime, totalContacts});
+        List<CampaignMessage> campaignMessages = campaignMessageService.findMessagesForTimeSlot(campaignId, messageTime, messageSlot);
+        List<Contact> campaignContacts = contactService.getAllContacts();
+        int totalContacts = 0;
 
         for (Contact campaignContact : campaignContacts) {
-
-            verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), campaignContact.getProgress() + 1);
-            campaignContact.setProgress(campaignContact.getProgress() + 1);
-            contactRepository.save(campaignContact);
-
+            for (CampaignMessage campaignMessage : campaignMessages) {
+                if ((campaignContact.getProgress() == 0) && (campaignMessage.getMessageDay() == 1)) {
+                    verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), campaignContact.getProgress() + 1);
+                    campaignContact.setProgress(campaignContact.getProgress() + 1);
+                    contactService.saveContact(campaignContact);
+                    totalContacts++;
+                } else if (campaignContact.getProgress()-1 > campaignMessage.getMessageDay()) {
+                    verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), campaignContact.getProgress() + 1);
+                    campaignContact.setProgress(campaignContact.getProgress() + 1);
+                    contactService.saveContact(campaignContact);
+                    totalContacts++;
+                }
+            }
         }
+
+        log.info("sending messages for relative campaign: [id={}], [msgSlot={}], [msgTime={}], [totalContacts={}]",
+                new Object[]{campaignId, messageSlot, messageTime, totalContacts});
     }
 
     /*private void processFlexiCampaign(Campaign campaign, Date msgTime) throws Exception {

@@ -3,7 +3,6 @@ package org.celllife.ivr.application;
 import org.celllife.ivr.application.utils.JsonUtils;
 import org.celllife.ivr.domain.CallLog;
 import org.celllife.ivr.domain.CallLogRepository;
-import org.celllife.ivr.domain.Contact;
 import org.celllife.ivr.integration.verboice.VerboiceService;
 import org.json.JSONException;
 import org.slf4j.Logger;

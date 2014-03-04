@@ -7,9 +7,6 @@ import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.util.Date;
 
-/**
- * @author Simon Kelly
- */
 public class RelativeCampaignJobRunner extends QuartzJobBean {
 	
 	public static final String PROP_CAMPAIGN_ID = "campaignId";

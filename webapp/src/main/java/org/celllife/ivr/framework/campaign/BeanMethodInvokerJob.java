@@ -8,9 +8,6 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 
-/**
- * @author Simon Kelly
- */
 public class BeanMethodInvokerJob extends QuartzJobBean {
 	
 	private ApplicationContext applicationContext;

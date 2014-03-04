@@ -17,9 +17,9 @@ import java.util.*;
 @Service
 public class QuartzServiceImpl implements QuartzService {
 
-    private static Logger log = LoggerFactory.getLogger(QuartzServiceImpl.class);
-
     private static final String DAILY_CRONEXPR = "{0} {1} {2} ? * *";
+
+    private static Logger log = LoggerFactory.getLogger(QuartzServiceImpl.class);
 
     @Autowired
     @Qualifier("qrtzScheduler")
@@ -35,8 +35,6 @@ public class QuartzServiceImpl implements QuartzService {
 
         return cronExpr;
     }
-
-
 
     @Override
     public void clearTriggersForGroup(String groupName) {
@@ -98,5 +96,9 @@ public class QuartzServiceImpl implements QuartzService {
         }
     }
 
+    @Override
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
 
 }

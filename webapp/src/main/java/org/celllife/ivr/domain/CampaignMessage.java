@@ -14,7 +14,7 @@ public class CampaignMessage {
 	private int verboiceMessageNumber;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-    @Column(columnDefinition="DATETIME")
+    @Column(columnDefinition="TIME")
 	private Date messageTime;
 	
 	private int messageSlot;

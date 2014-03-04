@@ -5,8 +5,6 @@ import java.util.Map;
 
 public enum CampaignStatus {
 	
-	// NOTE: changes to these constants affect the REST API. Make sure you append the old version to the list of previous versions.
-
 	INACTIVE,
 	/**
 	 * only applies to fixed campaigns 

@@ -3,7 +3,6 @@ package org.celllife.ivr.interfaces.web;
 import org.celllife.ivr.application.ContactService;
 import org.celllife.ivr.domain.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +28,7 @@ public class CsvUploadController {
     ContactService contactService;
 
     @ResponseBody
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/service/contacts", method = RequestMethod.POST)
     public String upload(@RequestParam("file") MultipartFile uploadedFile) throws IOException {
 
         ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(uploadedFile.getInputStream()), CsvPreference.STANDARD_PREFERENCE);

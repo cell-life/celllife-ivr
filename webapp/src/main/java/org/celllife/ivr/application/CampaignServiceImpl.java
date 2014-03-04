@@ -2,7 +2,9 @@ package org.celllife.ivr.application;
 
 import org.celllife.ivr.domain.*;
 import org.celllife.ivr.framework.campaign.RelativeCampaignJobRunner;
+import org.dozer.util.IteratorUtils;
 import org.quartz.CronExpression;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +30,17 @@ public class CampaignServiceImpl implements CampaignService{
     QuartzService quartzService;
 
     @Override
-    public void addMessagesToCampaign(Campaign campaign, List<Integer> verboiceMessageNumbers, List<Date> messageTimesOfDay) throws Exception {
+    public void setMessagesForCampaign(Long campaignId, List<Integer> verboiceMessageNumbers, List<Date> messageTimesOfDay) throws Exception {
 
-        //FIXME: prob should strip this part out.
-        campaign.setEndDate(null);
+        Campaign campaign = getCampaign(campaignId);
+
+        //FIXME: need to figure out whether I need this yet and where to put it.
+        /*campaign.setEndDate(null);
         if (campaign.getStartDate() == null) {
             campaign.setStartDate(new Date());
         }
         campaign.setStatus(CampaignStatus.ACTIVE);
-        campaignRepository.save(campaign);
+        campaignRepository.save(campaign); */
 
         List<CampaignMessage> campaignMessages = new ArrayList<>();
 
@@ -54,24 +58,26 @@ public class CampaignServiceImpl implements CampaignService{
 
         String group = campaign.getIdentifierString();
         List<String> existingTriggers = quartzService.getTriggers(group);
+        List<String> newTriggers = new ArrayList<>();
 
         for (CampaignMessage campaignMessage : campaignMessages) {
 
-            String name =getTriggerNameForCampaign(campaign.getId(),  campaignMessage.getMessageTime(), campaignMessage.getMessageSlot());
+            String name =getTriggerNameForCampaign(campaignId,  campaignMessage.getMessageTime(), campaignMessage.getMessageSlot());
 
-            if (existingTriggers.contains(name)) {
-                log.debug("Trigger [{}] already exists for campaign [{}]", name, campaign.getId());
+            if (existingTriggers.contains(name) || newTriggers.contains(name)) {
+                log.debug("Trigger [{}] already exists for campaign [{}]", name, campaignId);
                 existingTriggers.remove(name);
             }
             else {
-                log.debug("MsgTime [{}] for campaign [{}] for msgSlot [{}]", new Object[] {campaignMessage.getMessageTime(), campaign.getId(), campaignMessage.getMessageSlot()});
-                createQuartzTriggerForCampaign(campaign.getId(), campaignMessage.getMessageTime(), campaignMessage.getMessageSlot());
+                log.debug("MsgTime [{}] for campaign [{}] for msgSlot [{}]", new Object[] {campaignMessage.getMessageTime(), campaignId, campaignMessage.getMessageSlot()});
+                String triggerName = createQuartzTriggerForCampaign(campaignId, campaignMessage.getMessageTime(), campaignMessage.getMessageSlot());
+                newTriggers.add(triggerName);
             }
         }
 
         for (String oldTrigger : existingTriggers) {
             try {
-                log.debug("Removing old trigger for campaign [id={}] [trigger={}]", campaign.getId(), oldTrigger);
+                log.debug("Removing old trigger for campaign [id={}] [trigger={}]", campaignId, oldTrigger);
                 quartzService.removeTrigger(oldTrigger, campaign.getIdentifierString());
             }
             catch (SchedulerException e) {
@@ -80,8 +86,9 @@ public class CampaignServiceImpl implements CampaignService{
         }
     }
 
-    @Override
-    public void createQuartzTriggerForCampaign(Long campaignId, Date msgTime, Integer msgSlot) throws Exception {
+    private String createQuartzTriggerForCampaign(Long campaignId, Date msgTime, Integer msgSlot) throws Exception {
+
+        Campaign campaign = getCampaign(campaignId);
 
         Map<String, Object> jobMap = new HashMap<String, Object>();
 
@@ -99,7 +106,7 @@ public class CampaignServiceImpl implements CampaignService{
         trigger.setJobName("relativeCampaignJobRunner");
         trigger.setJobGroup("campaignJobs");
         trigger.setVolatility(false);
-        trigger.setGroup(campaignId.toString());
+        trigger.setGroup(campaign.getIdentifierString());
 
         try {
             String cronExpr = quartzService.cronExprForDailyOccurence(msgTime);
@@ -110,19 +117,36 @@ public class CampaignServiceImpl implements CampaignService{
             throw new Exception("Error scheduling campaign. Cause: " + e.getMessage(), e);
         }
 
+        return name;
     }
 
     public Campaign getCampaign(Long id) {
         return campaignRepository.findOne(id);
     }
 
-    private String getTriggerNameForCampaign(Long campaignId, Date msgTime, Integer msgSlot) {
+    public Campaign saveCampaign(Campaign campaign) {
+        return campaignRepository.save(campaign);
+    }
 
+    private String getTriggerNameForCampaign(Long campaignId, Date msgTime, Integer msgSlot) {
         Campaign campaign = getCampaign(campaignId);
         String name = MessageFormat.format("{0}-[slot={1}]-[time={2,time,medium}]", campaign.getName(), msgSlot, msgTime);
         return name;
-
     }
 
+    @Override
+    public Scheduler getScheduler() {
+        return quartzService.getScheduler();
+    }
+
+    @Override
+    public void deleteAllCampaigns() {
+        campaignRepository.deleteAll();
+    }
+
+    @Override
+    public List<Campaign> findAllCampaigns() {
+        return IteratorUtils.toList(campaignRepository.findAll().iterator());
+    }
 
 }

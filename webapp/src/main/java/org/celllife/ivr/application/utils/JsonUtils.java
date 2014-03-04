@@ -15,9 +15,9 @@ public class JsonUtils {
         JSONObject menu = jObject.getJSONObject("response");
 
         Map<String, String> map = new HashMap<String, String>();
-        Iterator iter = menu.keys();
-        while (iter.hasNext()) {
-            String key = (String) iter.next();
+        Iterator iterator = menu.keys();
+        while (iterator.hasNext()) {
+            String key = (String) iterator.next();
             String value = menu.getString(key);
             map.put(key, value);
         }

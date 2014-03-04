@@ -1,8 +1,8 @@
 package org.celllife.ivr.application;
 
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.springframework.scheduling.quartz.CronTriggerBean;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -18,5 +18,7 @@ public interface QuartzService {
     void removeTrigger(String triggerName, String groupName) throws SchedulerException;
 
     String cronExprForDailyOccurence(Date msgDateTime);
+
+    Scheduler getScheduler();
 
 }

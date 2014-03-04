@@ -29,62 +29,31 @@ public class Campaign {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
-
-	/*private boolean sendNow;
-
-	private int contactCount = 0;
-
-	private int messageCount = 0;*/
-
     @Enumerated(EnumType.STRING)
     private CampaignType type;
 
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
-
-	/*@OneToMany(fetch = FetchType.LAZY, mappedBy = "campaign")
-	@ForeignKey(name="fk_campaign_contactmsgtime", inverseName="fk_contactmsgtime_campaign")
-	private List<ContactMsgTime> contactMsgTimes = new ArrayList<ContactMsgTime>();  */
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "campaignId")
-	private List<Contact> campaignContacts;
-
     private String callFlowName;
 
     private String channelName;
 
     private String scheduleName;
 
-	/*@Transient
-	private boolean rebuildMessages;
-
-	@Transient
-	private List<Date> messageTimes;*/
-	
 	public Campaign() {
 
 	}
 
-	public Campaign(CampaignType type, CampaignStatus status, Date startDate, String name, String description) {
-		super();
-		this.type = type;
-		this.status = status;
-		this.startDate = startDate == null ? null : new Date(startDate.getTime());
-		this.name = name;
-		this.description = description;
-	}
-
-	public Campaign(String name, String description, CampaignType type, CampaignStatus status,
-                    int campaignDuration, int timesPerDay) {
-		this.type = type;
-		this.status = status;
-		this.startDate = new Date();
-		this.duration = campaignDuration;
-		this.name = name;
-		this.description = description;
-		this.timesPerDay = timesPerDay;
-
-	}
+    public Campaign(String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName) {
+        this.name = name;
+        this.type = type;
+        this.description = description;
+        this.timesPerDay = timesPerDay;
+        this.duration = duration;
+        this.callFlowName = callFlowName;
+        this.channelName = channelName;
+        this.scheduleName = scheduleName;
+    }
 
     public Long getId() {
         return id;
@@ -150,14 +119,6 @@ public class Campaign {
 		this.duration = duration;
 	}
 
-	public List<Contact> getCampaignContacts() {
-		return campaignContacts;
-	}
-
-	public void setCampaignContacts(List<Contact> campaignContacts) {
-		this.campaignContacts = campaignContacts;
-	}
-
 	public Date getEndDate() {
 		return endDate == null ? null : new Date(endDate.getTime());
 	}
@@ -176,13 +137,6 @@ public class Campaign {
 
 	public boolean isScheduled() {
 		return CampaignStatus.SCHEDULED.equals(status);
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Campaign: ").append(name);
-		return builder.toString();
 	}
 
     public String getCallFlowName() {
