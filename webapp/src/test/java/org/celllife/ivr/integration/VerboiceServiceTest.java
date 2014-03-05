@@ -21,8 +21,6 @@ public class VerboiceServiceTest extends TestConfiguration {
 
         String response = verboiceService.enqueueCall("Skype Channel", "Call #1", "Test", "27724194158", "1234", 0);
 
-        System.out.println(response);
-
     }
 
 

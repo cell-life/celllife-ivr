@@ -63,11 +63,6 @@ public class CampaignServiceTest extends TestConfiguration {
     @After
     public void tearDown() throws Exception {
 
-        List<Campaign> allCampaigns = campaignService.findAllCampaigns();
-        for (Campaign campaign : allCampaigns) {
-            campaignService.getScheduler().deleteJob("relativeCampaignJobRunner", "campaignJobs");
-        }
-
         campaignService.deleteAllCampaigns();
 
     }

@@ -21,6 +21,7 @@ public class ContactServiceTest extends TestConfiguration {
 
     @Before
     public void setUp() {
+        contactService.deleteAll();
         contactService.saveContact(new Contact("27724194158","1234", 1L, 0));
     }
 

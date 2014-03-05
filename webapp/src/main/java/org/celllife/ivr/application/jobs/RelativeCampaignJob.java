@@ -65,29 +65,32 @@ public class RelativeCampaignJob {
 
         List<CampaignMessage> campaignMessages = campaignMessageService.findMessagesForTimeSlot(campaignId, messageTime, messageSlot);
         List<Contact> campaignContacts = contactService.getAllContacts();
-        int totalContacts = 0;
 
         for (Contact campaignContact : campaignContacts) {
-            for (CampaignMessage campaignMessage : campaignMessages) {
-                int messageNumber;
-                if ((campaignContact.getProgress() == 0) && (campaignMessage.getMessageDay() == 1)) {
-                    messageNumber = campaignContact.getProgress() + 1;
-                    verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), messageNumber);
-                    campaignContact.setProgress(campaignContact.getProgress() + 1);
-                    contactService.saveContact(campaignContact);
-                    totalContacts++;
-                } else if (campaignContact.getProgress() - 1 > campaignMessage.getMessageDay()) {
-                    messageNumber = campaignContact.getProgress() + 1;
-                    verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), messageNumber);
-                    campaignContact.setProgress(campaignContact.getProgress() + 1);
-                    contactService.saveContact(campaignContact);
-                    totalContacts++;
-                }
+
+            CampaignMessage campaignMessage = getMessageForContact(campaignContact, campaignMessages);
+
+            if (campaignMessage != null) {
+                verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), campaignMessage.getVerboiceMessageNumber());
+                campaignContact.setProgress(campaignMessage.getVerboiceMessageNumber());
+                contactService.saveContact(campaignContact);
+            }
+
+        }
+
+        log.info("sending messages for relative campaign: [id={}], [msgSlot={}], [msgTime={}]]",
+                new Object[]{campaignId, messageSlot, messageTime});
+    }
+
+    protected CampaignMessage getMessageForContact(Contact campaignContact, List<CampaignMessage> campaignMessages) {
+
+        for (CampaignMessage campaignMessage : campaignMessages) {
+            if ((campaignContact.getProgress()+1) ==  campaignMessage.getMessageDay()) {
+                return campaignMessage;
             }
         }
 
-        log.info("sending messages for relative campaign: [id={}], [msgSlot={}], [msgTime={}], [totalContacts={}]",
-                new Object[]{campaignId, messageSlot, messageTime, totalContacts});
+        return null;
     }
 
 }
