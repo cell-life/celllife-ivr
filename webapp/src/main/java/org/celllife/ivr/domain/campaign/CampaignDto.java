@@ -1,32 +1,16 @@
-package org.celllife.ivr.domain;
+package org.celllife.ivr.domain.campaign;
 
 import java.io.Serializable;
 
 public class CampaignDto implements Serializable {
 
-    String name;
-
-    String description;
-
-    Integer timesPerDay;
-
-    Integer duration;
-
-    String callFlowName;
-
-    String channelName;
-
-    String scheduleName;
-
-    public CampaignDto(Campaign campaign) {
-        this.name = campaign.getName();
-        this.description = campaign.getDescription();
-        this.timesPerDay = campaign.getTimesPerDay();
-        this.duration = campaign.getDuration();
-        this.callFlowName = campaign.getCallFlowName();
-        this.channelName = campaign.getChannelName();
-        this.scheduleName = campaign.getScheduleName();
-    }
+    private String name;
+    private String description;
+    private Integer timesPerDay;
+    private Integer duration;
+    private String callFlowName;
+    private String channelName;
+    private String scheduleName;
 
     public String getName() {
         return name;

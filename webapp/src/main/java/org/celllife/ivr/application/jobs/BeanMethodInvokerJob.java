@@ -1,4 +1,4 @@
-package org.celllife.ivr.framework.campaign;
+package org.celllife.ivr.application.jobs;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

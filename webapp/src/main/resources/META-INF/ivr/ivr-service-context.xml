@@ -14,7 +14,7 @@
         <!--<property name="volatility" value="true"/>
         <property name="group" value="backgroundServices" />
         <property name="name" value="processCampFinish" />-->
-        <property name="jobClass" value="org.celllife.ivr.framework.campaign.BeanMethodInvokerJob" />
+        <property name="jobClass" value="org.celllife.ivr.application.jobs.BeanMethodInvokerJob" />
         <property name="jobDataAsMap">
             <map>
                 <entry key="beanName" value="backgroundService" />
@@ -38,7 +38,7 @@
         <property name="requestsRecovery" value="true"/>
         <property name="group" value="campaignJobs" />
         <property name="name" value="relativeCampaignJobRunner" />
-        <property name="jobClass" value="org.celllife.ivr.framework.campaign.RelativeCampaignJobRunner" />
+        <property name="jobClass" value="org.celllife.ivr.application.jobs.RelativeCampaignJobRunner" />
     </bean>
 
     <bean id="qrtzScheduler"

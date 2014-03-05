@@ -14,9 +14,6 @@
             <column name="duration" type="INT" />
             <column name="start_date" type="DATETIME" />
             <column name="end_date" type="DATETIME" />
-            <column name="send_now" type="BOOLEAN" />
-            <column name="contact_count" type="INT" />
-            <column name="message_count" type="INT" />
             <column name="type" type="VARCHAR(32)" />
             <column name="status" type="VARCHAR(32)" />
             <column name="call_flow_name" type="VARCHAR(32)" />

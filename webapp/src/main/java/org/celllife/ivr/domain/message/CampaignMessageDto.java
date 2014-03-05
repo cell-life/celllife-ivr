@@ -1,4 +1,4 @@
-package org.celllife.ivr.domain;
+package org.celllife.ivr.domain.message;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 package org.celllife.ivr.application;
 
 import junit.framework.Assert;
-import org.celllife.ivr.domain.Contact;
+import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.test.TestConfiguration;
 import org.dozer.util.IteratorUtils;
 import org.junit.After;
@@ -21,7 +21,7 @@ public class ContactServiceTest extends TestConfiguration {
 
     @Before
     public void setUp() {
-        contactService.saveContact(new Contact("27724194158","1234"));
+        contactService.saveContact(new Contact("27724194158","1234", 1L, 0));
     }
 
     @Test

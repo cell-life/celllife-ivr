@@ -1,4 +1,4 @@
-package org.celllife.ivr.domain;
+package org.celllife.ivr.domain.callog;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -36,12 +36,25 @@ public class CallLog {
 
     }
 
-    public CallLog(Date date, Long verboiceId, String msisdn, String password, int progress, String channelName, String callFlowName, String scheduleName, String state) {
+    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String password, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+        this.id = id;
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
         this.password = password;
-        this.messageNumber = progress;
+        this.messageNumber = messageNumber;
+        this.channelName = channelName;
+        this.callFlowName = callFlowName;
+        this.scheduleName = scheduleName;
+        this.state = state;
+    }
+
+    public CallLog(Date date, Long verboiceId, String msisdn, String password, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+        this.date = date;
+        this.verboiceId = verboiceId;
+        this.msisdn = msisdn;
+        this.password = password;
+        this.messageNumber = messageNumber;
         this.channelName = channelName;
         this.callFlowName = callFlowName;
         this.scheduleName = scheduleName;

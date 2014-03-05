@@ -1,7 +1,4 @@
-package org.celllife.ivr.domain;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.celllife.ivr.domain.campaign;
 
 public enum CampaignStatus {
 	

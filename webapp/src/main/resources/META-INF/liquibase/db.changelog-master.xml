@@ -11,7 +11,6 @@
     <include file="db.changelog-calllog.xml" relativeToChangelogFile="true"/>
     <include file="db.changelog-campaign.xml" relativeToChangelogFile="true"/>
     <include file="db.changelog-campaign-message.xml" relativeToChangelogFile="true"/>
-    <include file="db.changelog-contactmsgtime.xml" relativeToChangelogFile="true"/>
     <include file="db.changelog-quartz.xml" relativeToChangelogFile="true"/>
 
     <!-- Cross Domain Constraints -->

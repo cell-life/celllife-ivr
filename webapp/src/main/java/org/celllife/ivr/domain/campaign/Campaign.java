@@ -1,13 +1,7 @@
-package org.celllife.ivr.domain;
-
-import org.hibernate.annotations.ForeignKey;
-import org.hibernate.annotations.Index;
+package org.celllife.ivr.domain.campaign;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Cacheable
@@ -17,13 +11,16 @@ public class Campaign {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
-	private String name;
+    @Basic(optional=false)
+    private String name;
 
 	private String description = "";
 
-	private int timesPerDay = 0;
+    @Basic(optional=false)
+    private int timesPerDay = 0;
 
-	private int duration = 0;
+    @Basic(optional=false)
+    private int duration = 0;
 
 	private Date endDate;
 
@@ -34,15 +31,31 @@ public class Campaign {
 
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
+
+    @Basic(optional=false)
     private String callFlowName;
 
+    @Basic(optional=false)
     private String channelName;
 
+    @Basic(optional=false)
     private String scheduleName;
 
 	public Campaign() {
 
 	}
+
+    public Campaign(Long id, String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.description = description;
+        this.timesPerDay = timesPerDay;
+        this.duration = duration;
+        this.callFlowName = callFlowName;
+        this.channelName = channelName;
+        this.scheduleName = scheduleName;
+    }
 
     public Campaign(String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName) {
         this.name = name;
@@ -165,6 +178,18 @@ public class Campaign {
 
     public String getIdentifierString(){
         return this.getClass().getName() + ":" + id;
+    }
+
+    public CampaignDto getCampaignDto() {
+        CampaignDto campaignDto = new CampaignDto();
+        campaignDto.setName(this.getName());
+        campaignDto.setDescription(this.getDescription());
+        campaignDto.setDuration(this.getDuration());
+        campaignDto.setTimesPerDay(this.getTimesPerDay());
+        campaignDto.setCallFlowName(this.getCallFlowName());
+        campaignDto.setChannelName(this.getChannelName());
+        campaignDto.setScheduleName(this.getScheduleName());
+        return campaignDto;
     }
 
 }

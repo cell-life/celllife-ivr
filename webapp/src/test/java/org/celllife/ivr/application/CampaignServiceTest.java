@@ -1,8 +1,8 @@
 package org.celllife.ivr.application;
 
 import junit.framework.Assert;
-import org.celllife.ivr.domain.Campaign;
-import org.celllife.ivr.domain.CampaignType;
+import org.celllife.ivr.domain.campaign.Campaign;
+import org.celllife.ivr.domain.campaign.CampaignType;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
 import org.junit.Test;

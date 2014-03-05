@@ -1,8 +1,10 @@
-package org.celllife.ivr.interfaces.web;
+package org.celllife.ivr.interfaces.service;
 
 import org.celllife.ivr.application.ContactService;
-import org.celllife.ivr.domain.Contact;
+import org.celllife.ivr.domain.contact.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,7 +31,7 @@ public class CsvUploadController {
 
     @ResponseBody
     @RequestMapping(value = "/service/contacts", method = RequestMethod.POST)
-    public String upload(@RequestParam("file") MultipartFile uploadedFile) throws IOException {
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile uploadedFile) throws IOException {
 
         ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(uploadedFile.getInputStream()), CsvPreference.STANDARD_PREFERENCE);
 
@@ -50,11 +52,14 @@ public class CsvUploadController {
 
             contactService.saveContacts(contactDTOList);
 
-        } finally {
+        } catch(Exception e) {
+            return new ResponseEntity<String>("An error occurred while trying to add contacts. " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        finally {
             mapReader.close();
         }
 
-        return "success";
+        return new ResponseEntity<String>("Successfully added contacts.", HttpStatus.OK);
 
     }
 

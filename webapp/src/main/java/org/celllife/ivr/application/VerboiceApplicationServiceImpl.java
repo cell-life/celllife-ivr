@@ -1,8 +1,8 @@
 package org.celllife.ivr.application;
 
 import org.celllife.ivr.application.utils.JsonUtils;
-import org.celllife.ivr.domain.CallLog;
-import org.celllife.ivr.domain.CallLogRepository;
+import org.celllife.ivr.domain.callog.CallLog;
+import org.celllife.ivr.domain.callog.CallLogRepository;
 import org.celllife.ivr.integration.verboice.VerboiceService;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         if (responseVariables.containsKey("call_id")){
             callLogRepository.save(new CallLog(new Date(), Long.parseLong(responseVariables.get("call_id")), msisdn,
-                    password, 0, channelName, callFlowName, scheduleName, responseVariables.get("state")));
+                    password, 0, channelName, callFlowName, scheduleName, responseVariables.get("state"),messageNumber));
         } else {
             log.warn("No call ID returned from Verboice server.");
             throw new Exception("No call ID returned from Verboice server.");

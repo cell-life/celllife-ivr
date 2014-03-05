@@ -1,4 +1,4 @@
-package org.celllife.ivr.framework.campaign;
+package org.celllife.ivr.application.jobs;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -22,7 +22,7 @@ public class RelativeCampaignJobRunner extends QuartzJobBean {
 	@Override
 	protected void executeInternal(JobExecutionContext jobExecutionContext)throws JobExecutionException {
 		RelativeCampaignJob job = (RelativeCampaignJob) applicationContext.getBean(RelativeCampaignJob.NAME);
-		job.sendMessagesForCampaign(campaignId, userId, msgSlot, msgTime);
+		job.sendMessagesForCampaign(campaignId, msgSlot, msgTime);
 	}
 	
 	public void setCampaignId(Long campaignId) {

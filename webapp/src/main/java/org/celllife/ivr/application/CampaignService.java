@@ -1,6 +1,6 @@
 package org.celllife.ivr.application;
 
-import org.celllife.ivr.domain.Campaign;
+import org.celllife.ivr.domain.campaign.Campaign;
 import org.quartz.Scheduler;
 
 import java.util.Date;

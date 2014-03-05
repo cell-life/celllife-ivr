@@ -1,4 +1,4 @@
-package org.celllife.ivr.domain;
+package org.celllife.ivr.domain.message;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -10,28 +10,43 @@ public class CampaignMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-	
-	private int verboiceMessageNumber;
+
+    @Basic(optional=false)
+    private int verboiceMessageNumber;
 	
 	@Temporal(TemporalType.TIMESTAMP)
     @Column(columnDefinition="TIME")
-	private Date messageTime;
-	
-	private int messageSlot;
+    @Basic(optional=false)
+    private Date messageTime;
 
-	private int messageDay;
+    @Basic(optional=false)
+    private int messageSlot;
 
+    @Basic(optional=false)
+    private int messageDay;
+
+    @Basic(optional=false)
     private Long campaignId;
 
 	public CampaignMessage() {
 	}
 
-	public CampaignMessage(int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime) {
+	public CampaignMessage(int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime, Long campaignId) {
 		this.verboiceMessageNumber = verboiceMessageNumber;
 		this.messageDay = msgDay;
 		this.messageTime = messageTime;
 		this.messageSlot = msgSlot;
+        this.campaignId = campaignId;
 	}
+
+    public CampaignMessage(Long id, int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime, Long campaignId) {
+        setId(id);
+        this.verboiceMessageNumber = verboiceMessageNumber;
+        this.messageDay = msgDay;
+        this.messageTime = messageTime;
+        this.messageSlot = msgSlot;
+        this.campaignId = campaignId;
+    }
 
 	public int getVerboiceMessageNumber() {
 		return verboiceMessageNumber;

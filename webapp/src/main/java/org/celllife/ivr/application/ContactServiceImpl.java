@@ -1,7 +1,7 @@
 package org.celllife.ivr.application;
 
-import org.celllife.ivr.domain.Contact;
-import org.celllife.ivr.domain.ContactRepository;
+import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.contact.ContactRepository;
 import org.dozer.util.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

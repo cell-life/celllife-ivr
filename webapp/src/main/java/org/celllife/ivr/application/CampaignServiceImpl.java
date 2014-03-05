@@ -1,7 +1,9 @@
 package org.celllife.ivr.application;
 
-import org.celllife.ivr.domain.*;
-import org.celllife.ivr.framework.campaign.RelativeCampaignJobRunner;
+import org.celllife.ivr.application.jobs.RelativeCampaignJobRunner;
+import org.celllife.ivr.domain.campaign.Campaign;
+import org.celllife.ivr.domain.campaign.CampaignRepository;
+import org.celllife.ivr.domain.message.CampaignMessage;
 import org.dozer.util.IteratorUtils;
 import org.quartz.CronExpression;
 import org.quartz.Scheduler;
@@ -34,13 +36,7 @@ public class CampaignServiceImpl implements CampaignService{
 
         Campaign campaign = getCampaign(campaignId);
 
-        //FIXME: need to figure out whether I need this yet and where to put it.
-        /*campaign.setEndDate(null);
-        if (campaign.getStartDate() == null) {
-            campaign.setStartDate(new Date());
-        }
-        campaign.setStatus(CampaignStatus.ACTIVE);
-        campaignRepository.save(campaign); */
+        List<CampaignMessage> oldCampaignMessages = campaignMessageService.findMessagesInCampaign(campaignId);
 
         List<CampaignMessage> campaignMessages = new ArrayList<>();
 
@@ -49,7 +45,7 @@ public class CampaignServiceImpl implements CampaignService{
             for (int j = 0; j < campaign.getTimesPerDay(); j++) {
                 int msgSlot = j + 1;
                 int msgDay = i + 1;
-                CampaignMessage newCampaignMessage = new CampaignMessage(verboiceMessageNumbers.get(messageCounter), msgDay, msgSlot, messageTimesOfDay.get(j));
+                CampaignMessage newCampaignMessage = new CampaignMessage(verboiceMessageNumbers.get(messageCounter), msgDay, msgSlot, messageTimesOfDay.get(j),campaignId);
                 campaignMessages.add(newCampaignMessage);
                 campaignMessageService.save(newCampaignMessage);
                 messageCounter++;
@@ -83,6 +79,10 @@ public class CampaignServiceImpl implements CampaignService{
             catch (SchedulerException e) {
                 throw new Exception("Error removing trigger for campaign. Cause: " + e.getMessage(), e);
             }
+        }
+
+        for (CampaignMessage campaignMessage : oldCampaignMessages) {
+            campaignMessageService.deleteMessage(campaignMessage.getId());
         }
     }
 

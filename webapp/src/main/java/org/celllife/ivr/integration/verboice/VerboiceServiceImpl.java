@@ -1,6 +1,6 @@
 package org.celllife.ivr.integration.verboice;
 
-import org.celllife.ivr.domain.Contact;
+import org.celllife.ivr.domain.contact.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

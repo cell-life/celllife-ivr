@@ -1,12 +1,17 @@
 package org.celllife.ivr.interfaces.service;
 
 import org.celllife.ivr.application.CampaignService;
-import org.celllife.ivr.domain.Campaign;
-import org.celllife.ivr.domain.CampaignDto;
-import org.celllife.ivr.domain.CampaignMessageDto;
-import org.celllife.ivr.domain.CampaignType;
+import org.celllife.ivr.domain.campaign.Campaign;
+import org.celllife.ivr.domain.campaign.CampaignDto;
+import org.celllife.ivr.domain.campaign.CampaignStatus;
+import org.celllife.ivr.domain.campaign.CampaignType;
+import org.celllife.ivr.domain.message.CampaignMessageDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,34 +26,40 @@ import java.util.List;
 @Controller
 public class CampaignController {
 
+    private static Logger log = LoggerFactory.getLogger(CampaignController.class);
+
     @Autowired
     CampaignService campaignService;
 
-    //FIXME: name these urls properly
-
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, value= "/service/campaign")
-    public String createCampaign(@RequestBody List<CampaignDto> campaignDtos) {
+    @RequestMapping(method = RequestMethod.POST, value= "/service/campaigns")
+    public ResponseEntity<String> createCampaign(@RequestBody List<CampaignDto> campaignDtos){
 
         CampaignDto campaignDto = campaignDtos.get(0);
 
-        Campaign campaign = new Campaign(campaignDto.getName(), CampaignType.DAILY, campaignDto.getDescription(), campaignDto.getTimesPerDay(), campaignDto.getDuration(), campaignDto.getCallFlowName(), campaignDto.getChannelName(), campaignDto.getScheduleName());
+        if (campaignDtos.size() > 1) {
+            return new ResponseEntity<String>("Unfortunately you can only add one campaign at a time.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
+        Campaign campaign = new Campaign(campaignDto.getName(), CampaignType.DAILY, campaignDto.getDescription(), campaignDto.getTimesPerDay(), campaignDto.getDuration(), campaignDto.getCallFlowName(), campaignDto.getChannelName(), campaignDto.getScheduleName());
+        campaign.setStatus(CampaignStatus.ACTIVE);
+        campaign.setStartDate(new Date());
         campaign = campaignService.saveCampaign(campaign);
 
-        return("Campaign created with id " + campaign.getId());
+        return new ResponseEntity<String>("Campaign created with id " + campaign.getId(),HttpStatus.OK);
 
     }
 
     @ResponseBody
     @RequestMapping(value = "/service/campaigns", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<CampaignDto> getCampaigns() {
-       List<Campaign> campaigns = campaignService.findAllCampaigns();
+
+        List<Campaign> campaigns = campaignService.findAllCampaigns();
 
         Collection<CampaignDto> campaignDtos = new ArrayList<>();
 
         for (Campaign campaign : campaigns) {
-            campaignDtos.add(new CampaignDto(campaign));
+            campaignDtos.add(campaign.getCampaignDto());
         }
 
         return campaignDtos;
@@ -56,8 +67,8 @@ public class CampaignController {
     }
 
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, value = "/service/campaign/{campaignId}/campaignMessages")
-    public String addMessagesToCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Integer campaignId) throws Exception {
+    @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/campaignMessages")
+    public ResponseEntity<String> addMessagesToCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Integer campaignId) {
 
         List<Integer> verboiceMessageNumbers = new ArrayList<>();
 
@@ -72,14 +83,20 @@ public class CampaignController {
                 Date date = (Date)formatter.parse(campaignMessage.getMessageTimeOfDay());
                 messageTimesOfDay.add(date);
             } catch (ParseException e) {
-               throw new Exception("Times must be in the format hh:mm");
+                log.warn(e.getMessage() + e.getCause());
+                return new ResponseEntity<String>("An error occurred. Message times must be in the format hh:mm.",HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
         }
 
-        campaignService.setMessagesForCampaign(campaignId.longValue(), verboiceMessageNumbers, messageTimesOfDay);
+        try {
+            campaignService.setMessagesForCampaign(campaignId.longValue(), verboiceMessageNumbers, messageTimesOfDay);
+        } catch (Exception e) {
+            log.warn(e.getMessage() + e.getCause());
+            return new ResponseEntity<String>("Error Adding Messages to Campaign. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        return ("Success");
+        return new ResponseEntity<String>("Successfully added messages.", HttpStatus.OK);
 
     }
 
