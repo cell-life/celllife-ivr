@@ -2,6 +2,7 @@ package org.celllife.ivr.application;
 
 import junit.framework.Assert;
 import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.exception.ContactExistsException;
 import org.celllife.ivr.test.TestConfiguration;
 import org.dozer.util.IteratorUtils;
 import org.junit.After;
@@ -20,7 +21,7 @@ public class ContactServiceTest extends TestConfiguration {
     ContactServiceImpl contactService;
 
     @Before
-    public void setUp() {
+    public void setUp() throws ContactExistsException {
         contactService.deleteAll();
         contactService.saveContact(new Contact("27724194158","1234", 1L, 0));
     }

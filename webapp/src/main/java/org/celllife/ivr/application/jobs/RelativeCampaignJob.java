@@ -64,7 +64,7 @@ public class RelativeCampaignJob {
         Campaign campaign = campaignService.getCampaign(campaignId);
 
         List<CampaignMessage> campaignMessages = campaignMessageService.findMessagesForTimeSlot(campaignId, messageTime, messageSlot);
-        List<Contact> campaignContacts = contactService.getAllContacts();
+        List<Contact> campaignContacts = contactService.findContactsInCampaign(campaignId);
 
         for (Contact campaignContact : campaignContacts) {
 

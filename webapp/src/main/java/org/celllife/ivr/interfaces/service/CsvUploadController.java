@@ -2,14 +2,13 @@ package org.celllife.ivr.interfaces.service;
 
 import org.celllife.ivr.application.ContactService;
 import org.celllife.ivr.domain.contact.Contact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.supercsv.cellprocessor.constraint.NotNull;
 import org.supercsv.cellprocessor.ift.CellProcessor;
@@ -26,12 +25,13 @@ import java.util.Map;
 @Controller
 public class CsvUploadController {
 
+    private static Logger log = LoggerFactory.getLogger(CsvUploadController.class);
+
     @Autowired
     ContactService contactService;
 
-    @ResponseBody
-    @RequestMapping(value = "/service/contacts", method = RequestMethod.POST)
-    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile uploadedFile) throws IOException {
+    @RequestMapping(value = "/service/campaign/{campaignId}/contacts", method = RequestMethod.POST)
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile uploadedFile, @PathVariable Long campaignId) throws IOException {
 
         ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(uploadedFile.getInputStream()), CsvPreference.STANDARD_PREFERENCE);
 
@@ -44,21 +44,19 @@ public class CsvUploadController {
             List<Contact> contactDTOList = new ArrayList<>();
 
             while ((contactMap = mapReader.read(header, processors)) != null) {
-                Contact contact = new Contact();
-                contact.setMsisdn(contactMap.get("msisdn").toString());
-                contact.setPassword(contactMap.get("password").toString());
+                Contact contact = new Contact(contactMap.get("msisdn").toString(), contactMap.get("password").toString(), campaignId, 0);
                 contactDTOList.add(contact);
             }
 
             contactService.saveContacts(contactDTOList);
 
         } catch(Exception e) {
+            log.warn(e.getLocalizedMessage() + " " + e.getStackTrace().toString());
+            mapReader.close();
             return new ResponseEntity<String>("An error occurred while trying to add contacts. " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        finally {
-            mapReader.close();
-        }
 
+        mapReader.close();
         return new ResponseEntity<String>("Successfully added contacts.", HttpStatus.OK);
 
     }

@@ -12,7 +12,8 @@ public class Contact {
 
     private String password;
 
-    @Basic(optional=false)
+    @Column(unique = true)
+    @Basic(optional = false)
     private String msisdn;
 
     private int progress = 0;
@@ -37,6 +38,14 @@ public class Contact {
         setPassword(password);
         setProgress(progress);
         setCampaignId(campaignId);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getPassword() {
