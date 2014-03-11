@@ -1,14 +1,29 @@
 package org.celllife.ivr.domain.callog;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
+
+/**
+ * This entity is used to log/record a call sent to the Verboice server.
+ */
 
 @Entity
 @Cacheable
-public class CallLog {
+public class CallLog implements Serializable {
+
+    private static final long serialVersionUID = -6311433560024750172L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @TableGenerator(
+            name="CallLogIdGen",
+            table="hibernate_sequences",
+            pkColumnName="sequence_name",
+            valueColumnName="sequence_next_hi_value",
+            pkColumnValue="alert",
+            initialValue=1,
+            allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.TABLE, generator="CallLogIdGen")
     private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -132,4 +147,37 @@ public class CallLog {
     public void setState(String state) {
         this.state = state;
     }
+
+    @Override
+    public String toString() {
+        return "CallLog [id=" + id + ", date=" + date + ", verboiceId=" + verboiceId + ", msisdn=" + msisdn + ", password="
+                + password + ", messageNumber=" + messageNumber + ", channelName=" + channelName + ", callFlowName" + callFlowName
+                + ", scheduleName" + scheduleName + ", state" + state +  "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CallLog other = (CallLog) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
 }
