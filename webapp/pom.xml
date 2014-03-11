@@ -181,6 +181,10 @@
                             <value>DATABASECHANGELOGLOCK</value>
                         </systemProperty>
                         <systemProperty>
+                            <key>catalina.base</key>
+                            <value>target</value>
+                        </systemProperty>
+                        <systemProperty>
                             <key>logback.configurationFile</key>
                             <value>classpath:logback.xml</value>
                         </systemProperty>

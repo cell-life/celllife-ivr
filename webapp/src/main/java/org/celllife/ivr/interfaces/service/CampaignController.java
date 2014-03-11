@@ -83,7 +83,7 @@ public class CampaignController {
                 Date date = (Date)formatter.parse(campaignMessage.getMessageTimeOfDay());
                 messageTimesOfDay.add(date);
             } catch (ParseException e) {
-                log.warn(e.getMessage() + e.getCause());
+                log.warn("An error occurred. Message times must be in the format hh:mm.", e);
                 return new ResponseEntity<String>("An error occurred. Message times must be in the format hh:mm.",HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
@@ -92,7 +92,7 @@ public class CampaignController {
         try {
             campaignService.setMessagesForCampaign(campaignId.longValue(), verboiceMessageNumbers, messageTimesOfDay);
         } catch (Exception e) {
-            log.warn(e.getMessage() + e.getCause());
+            log.warn("Error Adding Messages to Campaign. " + e.getMessage(), e);
             return new ResponseEntity<String>("Error Adding Messages to Campaign. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

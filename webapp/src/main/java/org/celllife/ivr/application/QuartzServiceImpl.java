@@ -50,7 +50,7 @@ public class QuartzServiceImpl implements QuartzService {
                 }
             }
         } catch (SchedulerException e) {
-            log.error("Error clearing triggers for group=" + groupName, e);
+            log.error("Error clearing triggers for group " + groupName, e);
         }
 
     }

@@ -39,8 +39,8 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
         try {
             responseVariables = jsonUtils.extractJsonVariables("{\"response\":" + response + "}");
         } catch (JSONException e) {
-            log.warn("Unrecognized Response from Verboice Server. Response: " + response + "\n" + e.getStackTrace());
-            throw new Exception("Unrecognized Response from Verboice Server.");
+            log.warn("Unrecognized Response from Verboice Server. Response: " + response, e);
+            throw new Exception("Unrecognized Response from Verboice Server.", e);
         }
 
         if (responseVariables.containsKey("call_id")){

@@ -51,7 +51,7 @@ public class CsvUploadController {
             contactService.saveContacts(contactDTOList);
 
         } catch(Exception e) {
-            log.warn(e.getLocalizedMessage() + " " + e.getStackTrace().toString());
+            log.warn("Could not process CSV file. Reason: " + e.getLocalizedMessage(), e);
             mapReader.close();
             return new ResponseEntity<String>("An error occurred while trying to add contacts. " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
