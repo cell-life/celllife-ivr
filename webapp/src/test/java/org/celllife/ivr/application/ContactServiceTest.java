@@ -18,10 +18,10 @@ import java.util.List;
 public class ContactServiceTest extends TestConfiguration {
 
     @Autowired
-    ContactServiceImpl contactService;
+    ContactService contactService;
 
     @Before
-    public void setUp() throws ContactExistsException {
+    public void setUp() throws ContactExistsException, Exception {
         contactService.deleteAll();
         contactService.saveContact(new Contact("27724194158","1234", 1L, 0));
     }

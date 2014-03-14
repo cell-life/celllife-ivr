@@ -3,6 +3,19 @@
 
     <persistence-unit name="org.celllife.ivr.pu" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>org.celllife.ivr.domain.contact.Contact</class>
+        <class>org.celllife.ivr.domain.message.CampaignMessage</class>
+        <class>org.celllife.ivr.domain.campaign.Campaign</class>
+        <class>org.celllife.ivr.domain.callog.CallLog</class>
+        <!--<class>org.springframework.scheduling.quartz.SchedulerFactoryBean</class>-->
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+    </persistence-unit>
+
+    <persistence-unit name="org.celllife.ivr.verboice.pu" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>org.celllife.ivr.domain.verboice.contact.Contacts</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     </persistence-unit>
 
