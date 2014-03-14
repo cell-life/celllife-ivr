@@ -22,4 +22,10 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="campaign-2" author="dine@cell-life.org">
+        <addColumn tableName="campaign">
+            <column name="verboice_project_id" type="BIGINT" defaultValue="7" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

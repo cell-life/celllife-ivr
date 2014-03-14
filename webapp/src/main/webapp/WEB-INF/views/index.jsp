@@ -44,13 +44,13 @@
 
     <form role="form" class="form-horizontal" enctype="multipart/form-data" id="uploadForm">
         <div class="form-group">
-            <label for="campaignId" class="col-sm-2 control-label">Campaign</label>
+            <label for="campaignId" class="col-sm-2 control-label">Campaign ID:</label>
             <div class="col-sm-10">
                 <input type="number" id="campaignId" name="campaignId" class="form-control" required/>
             </div>
         </div>
         <div class="form-group">
-            <label for="file" class="col-sm-2 control-label">File</label>
+            <label for="file" class="col-sm-2 control-label">File:</label>
             <div class="col-sm-10">
                 <input type="file" id="file" name="file" class="form-control" required/>
             </div>

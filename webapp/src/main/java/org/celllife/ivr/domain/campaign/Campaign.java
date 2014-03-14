@@ -39,6 +39,7 @@ public class Campaign implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
+
     @Enumerated(EnumType.STRING)
     private CampaignType type;
 
@@ -53,6 +54,9 @@ public class Campaign implements Serializable {
 
     @Basic(optional=false)
     private String scheduleName;
+
+    @Basic(optional=false)
+    private Long verboiceProjectId;
 
 	public Campaign() {
 
@@ -191,6 +195,14 @@ public class Campaign implements Serializable {
 
     public String getIdentifierString(){
         return this.getClass().getName() + ":" + id;
+    }
+
+    public Long getVerboiceProjectId() {
+        return verboiceProjectId;
+    }
+
+    public void setVerboiceProjectId(Long verboiceProjectId) {
+        this.verboiceProjectId = verboiceProjectId;
     }
 
     public CampaignDto getCampaignDto() {
