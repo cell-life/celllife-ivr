@@ -1,4 +1,4 @@
-package org.celllife.ivr.application;
+package org.celllife.ivr.application.message;
 
 import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageRepository;

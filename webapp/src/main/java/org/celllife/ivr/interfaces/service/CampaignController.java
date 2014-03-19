@@ -1,6 +1,6 @@
 package org.celllife.ivr.interfaces.service;
 
-import org.celllife.ivr.application.CampaignService;
+import org.celllife.ivr.application.campaign.CampaignService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignDto;
 import org.celllife.ivr.domain.campaign.CampaignStatus;
@@ -54,7 +54,7 @@ public class CampaignController {
     @RequestMapping(value = "/service/campaigns", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<CampaignDto> getCampaigns() {
 
-        List<Campaign> campaigns = campaignService.findAllCampaigns();
+        List<Campaign> campaigns = campaignService.getAllCampaigns();
 
         Collection<CampaignDto> campaignDtos = new ArrayList<>();
 

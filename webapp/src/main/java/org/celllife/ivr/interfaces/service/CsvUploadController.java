@@ -1,7 +1,7 @@
 package org.celllife.ivr.interfaces.service;
 
-import org.celllife.ivr.application.ContactService;
-import org.celllife.ivr.application.VerboiceApplicationService;
+import org.celllife.ivr.application.contact.ContactService;
+import org.celllife.ivr.application.verboice.VerboiceApplicationService;
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class CsvUploadController {
                 contactList.add(contact);
             }
 
-            List<String> failedNumbers = verboiceApplicationService.createContactsFromCelllifeContactsAndSave(contactList, campaignId);
+            List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
             for (String number : failedNumbers) {
                 log.warn("The number " + number + " could not be added to the Verboice database, possibly because it already exists.");
                 contactList.remove(findIndexOfContactWithMsisdn(contactList, number));

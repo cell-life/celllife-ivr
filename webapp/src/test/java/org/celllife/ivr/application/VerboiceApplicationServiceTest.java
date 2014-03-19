@@ -1,5 +1,6 @@
 package org.celllife.ivr.application;
 
+import org.celllife.ivr.application.verboice.VerboiceApplicationService;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class VerboiceApplicationServiceTest extends TestConfiguration {
     @Test
     public void testEnqueueCallForMsisdn() throws Exception{
 
-        verboiceApplicationService.enqueueCallForMsisdn("Skype Channel", "Call #1", "Test", "27721234567", "2244", 1);
+        verboiceApplicationService.enqueueCallForMsisdn("Skype Channel", "Call #1", "Test", "27721234567", 1);
 
     }
 

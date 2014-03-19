@@ -1,9 +1,9 @@
 package org.celllife.ivr.application.jobs;
 
 import junit.framework.Assert;
-import org.celllife.ivr.application.CampaignMessageService;
-import org.celllife.ivr.application.CampaignService;
-import org.celllife.ivr.application.ContactService;
+import org.celllife.ivr.application.message.CampaignMessageService;
+import org.celllife.ivr.application.campaign.CampaignService;
+import org.celllife.ivr.application.contact.ContactService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignType;
 import org.celllife.ivr.domain.contact.Contact;
@@ -78,7 +78,7 @@ public class RelativeCampaignJobTest extends TestConfiguration{
     @After
     public void tearDown() throws Exception {
 
-        List<Campaign> allCampaigns = campaignService.findAllCampaigns();
+        List<Campaign> allCampaigns = campaignService.getAllCampaigns();
         for (Campaign campaign : allCampaigns) {
             campaignService.getScheduler().deleteJob("relativeCampaignJobRunner", "campaignJobs");
         }

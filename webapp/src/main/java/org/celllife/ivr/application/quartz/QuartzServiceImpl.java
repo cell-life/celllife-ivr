@@ -1,4 +1,4 @@
-package org.celllife.ivr.application;
+package org.celllife.ivr.application.quartz;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.quartz.Scheduler;
@@ -25,7 +25,7 @@ public class QuartzServiceImpl implements QuartzService {
     @Qualifier("qrtzScheduler")
     private Scheduler scheduler;
 
-    public String cronExprForDailyOccurence(Date msgDateTime) {
+    public String generateCronExprForDailyOccurence(Date msgDateTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(msgDateTime);
 

@@ -1,6 +1,8 @@
-package org.celllife.ivr.application;
+package org.celllife.ivr.application.campaign;
 
+import org.celllife.ivr.application.quartz.QuartzService;
 import org.celllife.ivr.application.jobs.RelativeCampaignJobRunner;
+import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignRepository;
 import org.celllife.ivr.domain.message.CampaignMessage;
@@ -109,7 +111,7 @@ public class CampaignServiceImpl implements CampaignService{
         trigger.setGroup(campaign.getIdentifierString());
 
         try {
-            String cronExpr = quartzService.cronExprForDailyOccurence(msgTime);
+            String cronExpr = quartzService.generateCronExprForDailyOccurence(msgTime);
             trigger.setCronExpression(new CronExpression(cronExpr));
             quartzService.addTrigger(trigger);
             log.debug("Campaign: {} scheduled with cron expression {}", campaignId, cronExpr);
@@ -145,7 +147,7 @@ public class CampaignServiceImpl implements CampaignService{
     }
 
     @Override
-    public List<Campaign> findAllCampaigns() {
+    public List<Campaign> getAllCampaigns() {
         return IteratorUtils.toList(campaignRepository.findAll().iterator());
     }
 

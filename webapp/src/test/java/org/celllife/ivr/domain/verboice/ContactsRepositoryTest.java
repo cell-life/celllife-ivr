@@ -1,6 +1,6 @@
 package org.celllife.ivr.domain.verboice;
 
-import org.celllife.ivr.application.VerboiceApplicationService;
+import org.celllife.ivr.application.verboice.VerboiceApplicationService;
 import org.celllife.ivr.domain.verboice.contacts.Contacts;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.Ignore;
@@ -33,7 +33,7 @@ public class ContactsRepositoryTest extends TestConfiguration {
 
         Contacts verboiceContact = new Contacts(7, new Date(), new Date());
 
-        verboiceContact = verboiceApplicationService.createContact(verboiceContact);
+        verboiceContact = verboiceApplicationService.saveVerboiceContact(verboiceContact);
 
     }
 

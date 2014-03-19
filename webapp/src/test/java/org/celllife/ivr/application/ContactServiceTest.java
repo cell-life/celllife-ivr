@@ -1,6 +1,7 @@
 package org.celllife.ivr.application;
 
 import junit.framework.Assert;
+import org.celllife.ivr.application.contact.ContactService;
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.exception.ContactExistsException;
 import org.celllife.ivr.test.TestConfiguration;

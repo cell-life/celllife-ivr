@@ -51,12 +51,11 @@ public class CallLog implements Serializable {
 
     }
 
-    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String password, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+    public CallLog(Long id, Date date, Long verboiceId, String msisdn, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
         this.id = id;
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
-        this.password = password;
         this.messageNumber = messageNumber;
         this.channelName = channelName;
         this.callFlowName = callFlowName;
@@ -64,11 +63,10 @@ public class CallLog implements Serializable {
         this.state = state;
     }
 
-    public CallLog(Date date, Long verboiceId, String msisdn, String password, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+    public CallLog(Date date, Long verboiceId, String msisdn, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
-        this.password = password;
         this.messageNumber = messageNumber;
         this.channelName = channelName;
         this.callFlowName = callFlowName;

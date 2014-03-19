@@ -27,7 +27,7 @@ public class VerboiceServiceImpl implements VerboiceService {
      * @throws Exception
      */
     @Override
-    public String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, String password, int messageNumber) throws Exception {
+    public String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber) throws Exception {
 
         String response = null;
         String url = verboiceBaseUrl;
@@ -37,7 +37,6 @@ public class VerboiceServiceImpl implements VerboiceService {
             url = url.concat("&address=" + msisdn);
             url = url.concat("&call_flow=" + URLEncoder.encode(callFlowName, "UTF-8"));
             url = url.concat("&schedule=" + URLEncoder.encode(scheduleName, "UTF-8"));
-            url = url.concat("&vars[password]=" + password);
             url = url.concat("&vars[message]=" + messageNumber);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

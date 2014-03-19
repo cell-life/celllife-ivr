@@ -1,4 +1,4 @@
-package org.celllife.ivr.application;
+package org.celllife.ivr.application.contact;
 
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.contact.ContactRepository;

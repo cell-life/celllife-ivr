@@ -1,5 +1,7 @@
-package org.celllife.ivr.application;
+package org.celllife.ivr.application.verboice;
 
+import org.celllife.ivr.application.campaign.CampaignService;
+import org.celllife.ivr.application.contact.ContactService;
 import org.celllife.ivr.application.utils.JsonUtils;
 import org.celllife.ivr.domain.callog.CallLog;
 import org.celllife.ivr.domain.callog.CallLogRepository;
@@ -50,7 +52,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     CallLogRepository callLogRepository;
 
     @Autowired
-    ContactsRepository contactsRepository;
+    ContactsRepository verboiceContactsRepository;
 
     @Autowired
     ContactAddressesRepository contactAddressesRepository;
@@ -62,12 +64,12 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     ProjectVariablesRepository projectVariablesRepository;
 
     @Override
-    public void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, String password, int messageNumber) throws IvrException {
+    public void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber) throws IvrException {
 
         String response = "";
 
         try {
-            response = verboiceService.enqueueCall(channelName, callFlowName, scheduleName, msisdn, password, messageNumber);
+            response = verboiceService.enqueueCall(channelName, callFlowName, scheduleName, msisdn, messageNumber);
         } catch (Exception e) {
             throw new IvrException("Could not enqueue call to verboice.");
         }
@@ -81,9 +83,9 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
             throw new IvrException("Unrecognized Response from Verboice Server.");
         }
 
-        if (responseVariables.containsKey("call_id")){
+        if (responseVariables.containsKey("call_id")) {
             callLogRepository.save(new CallLog(new Date(), Long.parseLong(responseVariables.get("call_id")), msisdn,
-                    password, 0, channelName, callFlowName, scheduleName, responseVariables.get("state"),messageNumber));
+                    0, channelName, callFlowName, scheduleName, responseVariables.get("state"), messageNumber));
         } else {
             log.warn("No call ID returned from Verboice server.");
             throw new IvrException("No call ID returned from Verboice server.");
@@ -93,8 +95,8 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
     @Override
     @Transactional("transactionManagerVerboice")
-    public Contacts createContact(Contacts contact) {
-        return contactsRepository.save(contact);
+    public Contacts saveVerboiceContact(Contacts contact) {
+        return verboiceContactsRepository.save(contact);
     }
 
     @Transactional("transactionManagerVerboice")
@@ -104,16 +106,16 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         if (existingContacts == 0) {
 
-            Contacts verboiceContact = new Contacts(campaign.getVerboiceProjectId().intValue(),new Date(),new Date());
-            verboiceContact = contactsRepository.save(verboiceContact);
+            Contacts verboiceContact = new Contacts(campaign.getVerboiceProjectId().intValue(), new Date(), new Date());
+            verboiceContact = verboiceContactsRepository.save(verboiceContact);
             if (verboiceContact.getId() == null) {
                 throw new VerboiceDatabaseException("Error saving contact to Verboice Database. This contact has not been added.");
             }
 
-            ContactAddresses contactAddresses = new ContactAddresses(contact.getMsisdn(),verboiceContact.getId(),campaign.getVerboiceProjectId().intValue(),new Date(), new Date());
+            ContactAddresses contactAddresses = new ContactAddresses(contact.getMsisdn(), verboiceContact.getId(), campaign.getVerboiceProjectId().intValue(), new Date(), new Date());
             contactAddressesRepository.save(contactAddresses);
 
-            PersistedVariables persistedVariables = new PersistedVariables(contact.getPassword(), new Date(), new Date(), verboiceContact.getId(),  projectVariableId);
+            PersistedVariables persistedVariables = new PersistedVariables(contact.getPassword(), new Date(), new Date(), verboiceContact.getId(), projectVariableId);
             persistedVariablesRepository.save(persistedVariables);
             return verboiceContact.getId();
 
@@ -127,14 +129,14 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
     @Override
     @Transactional("transactionManagerVerboice")
-    public List<String> createContactsFromCelllifeContactsAndSave(List<Contact> contacts, Long campaignId) throws IvrException{
+    public List<String> createContactsAndSave(List<Contact> contacts, Long campaignId) throws IvrException {
 
         Campaign campaign = campaignService.getCampaign(campaignId);
 
-        Iterable<ProjectVariables> projectVariables = projectVariablesRepository.findByNameAndProject(campaign.getVerboiceProjectId().intValue(),"password");
+        Iterable<ProjectVariables> projectVariables = projectVariablesRepository.findByNameAndProject(campaign.getVerboiceProjectId().intValue(), "password");
         List<ProjectVariables> projectVariablesList = IteratorUtils.toList(projectVariables.iterator());
 
-        if (projectVariablesList.size() != 1 ) {
+        if (projectVariablesList.size() != 1) {
             throw new IvrException("Cannot save contacts to verboice because password variable does not exist on Verboice server.");
         }
 
@@ -145,11 +147,9 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
                 Integer returnedId = createContactFromCelllifeContactAndSave(contact, campaign, projectVariablesList.get(0).getId());
                 contact.setVerboiceContactId(returnedId);
                 contactService.saveContact(contact);
-            }
-            catch (VerboiceDatabaseException e) {
+            } catch (VerboiceDatabaseException e) {
                 failedNumbers.add(contact.getMsisdn());
-            }
-            catch (ContactExistsException e) {
+            } catch (ContactExistsException e) {
                 log.warn("An error occurred while trying to save contact with msisdn " + contact.getMsisdn(), e);
             }
         }

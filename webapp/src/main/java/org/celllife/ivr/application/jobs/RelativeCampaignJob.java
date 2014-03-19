@@ -1,9 +1,9 @@
 package org.celllife.ivr.application.jobs;
 
-import org.celllife.ivr.application.CampaignMessageService;
-import org.celllife.ivr.application.CampaignService;
-import org.celllife.ivr.application.ContactService;
-import org.celllife.ivr.application.VerboiceApplicationService;
+import org.celllife.ivr.application.message.CampaignMessageService;
+import org.celllife.ivr.application.campaign.CampaignService;
+import org.celllife.ivr.application.contact.ContactService;
+import org.celllife.ivr.application.verboice.VerboiceApplicationService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignStatus;
 import org.celllife.ivr.domain.contact.Contact;
@@ -71,7 +71,7 @@ public class RelativeCampaignJob {
             CampaignMessage campaignMessage = getMessageForContact(campaignContact, campaignMessages);
 
             if (campaignMessage != null) {
-                verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignContact.getPassword(), campaignMessage.getVerboiceMessageNumber());
+                verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignMessage.getVerboiceMessageNumber());
                 campaignContact.setProgress(campaignMessage.getVerboiceMessageNumber());
                 contactService.saveContact(campaignContact);
             }
