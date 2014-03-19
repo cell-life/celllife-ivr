@@ -14,7 +14,10 @@
 
     <persistence-unit name="org.celllife.ivr.verboice.pu" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>org.celllife.ivr.domain.verboice.contact.Contacts</class>
+        <class>org.celllife.ivr.domain.verboice.contacts.Contacts</class>
+        <class>org.celllife.ivr.domain.verboice.contactaddresses.ContactAddresses</class>
+        <class>org.celllife.ivr.domain.verboice.persistedvariables.PersistedVariables</class>
+        <class>org.celllife.ivr.domain.verboice.projectvariables.ProjectVariables</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     </persistence-unit>

@@ -34,6 +34,8 @@ public class Contact implements Serializable {
     @Basic(optional=false)
     private Long campaignId;
 
+    private Integer verboiceContactId;
+
     public Contact() {
 
     }
@@ -91,6 +93,14 @@ public class Contact implements Serializable {
 
     public void setCampaignId(Long campaignId) {
         this.campaignId = campaignId;
+    }
+
+    public Integer getVerboiceContactId() {
+        return verboiceContactId;
+    }
+
+    public void setVerboiceContactId(Integer verboiceContactId) {
+        this.verboiceContactId = verboiceContactId;
     }
 
     @Override

@@ -15,4 +15,10 @@
 		</createTable>
 	</changeSet>
 
+    <changeSet id="contacts-2" author="dine@cell-life.org">
+        <addColumn tableName="contact">
+            <column name="verboice_contact_id" type="INT" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

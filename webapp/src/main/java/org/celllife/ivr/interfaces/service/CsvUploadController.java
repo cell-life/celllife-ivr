@@ -1,7 +1,9 @@
 package org.celllife.ivr.interfaces.service;
 
 import org.celllife.ivr.application.ContactService;
+import org.celllife.ivr.application.VerboiceApplicationService;
 import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,9 @@ public class CsvUploadController {
     @Autowired
     ContactService contactService;
 
+    @Autowired
+    VerboiceApplicationService verboiceApplicationService;
+
     @RequestMapping(value = "/service/campaign/{campaignId}/contacts", method = RequestMethod.POST)
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile uploadedFile, @PathVariable Long campaignId) throws IOException {
 
@@ -41,17 +46,24 @@ public class CsvUploadController {
             final CellProcessor[] processors = getProcessors();
 
             Map<String, Object> contactMap;
-            List<Contact> contactDTOList = new ArrayList<>();
+            List<Contact> contactList = new ArrayList<>();
 
             while ((contactMap = mapReader.read(header, processors)) != null) {
                 Contact contact = new Contact(contactMap.get("msisdn").toString(), contactMap.get("password").toString(), campaignId, 0);
-                contactDTOList.add(contact);
+                contactList.add(contact);
             }
 
-            contactService.saveContacts(contactDTOList);
+            List<String> failedNumbers = verboiceApplicationService.createContactsFromCelllifeContactsAndSave(contactList, campaignId);
+            for (String number : failedNumbers) {
+                log.warn("The number " + number + " could not be added to the Verboice database, possibly because it already exists.");
+                contactList.remove(findIndexOfContactWithMsisdn(contactList, number));
+            }
 
-        } catch(Exception e) {
-            log.warn("Could not process CSV file. Reason: " + e.getLocalizedMessage(), e);
+            failedNumbers = contactService.saveContacts(contactList);
+            // TODO: Send failed numbers back.
+
+        } catch(IvrException | IOException e) {
+            log.warn("Could not add contacts. Reason: " + e.getLocalizedMessage(), e);
             mapReader.close();
             return new ResponseEntity<String>("An error occurred while trying to add contacts. " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -77,4 +89,17 @@ public class CsvUploadController {
         return processors;
     }
 
+    private int findIndexOfContactWithMsisdn(List<Contact> contactList, String value) {
+
+        int counter = 0;
+
+        for(Contact contact: contactList) {
+            if(contact.getMsisdn().trim().contains(value))
+                return counter;
+            counter = counter + 1;
+        }
+
+        return -1;
+
+    }
 }

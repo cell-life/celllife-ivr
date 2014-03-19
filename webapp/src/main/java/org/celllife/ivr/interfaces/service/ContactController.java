@@ -1,15 +1,18 @@
 package org.celllife.ivr.interfaces.service;
 
-import org.celllife.ivr.domain.verboice.contact.Contacts;
-import org.celllife.ivr.domain.verboice.contact.ContactsDto;
-import org.celllife.ivr.domain.verboice.contact.ContactsRepository;
+import org.celllife.ivr.domain.verboice.contacts.Contacts;
+import org.celllife.ivr.domain.verboice.contacts.ContactsDto;
+import org.celllife.ivr.domain.verboice.contacts.ContactsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,8 +28,8 @@ public class ContactController {
     @Autowired
     ContactsRepository verboiceContactRepository;
 
-    @RequestMapping(method = RequestMethod.POST, value= "/service/campaigns/{campaignId}/contacts")
-    public ResponseEntity<String> createContact(@RequestBody List<ContactsDto> verboiceContactDtos, @PathVariable Integer campaignId){
+    @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/contacts")
+    public ResponseEntity<String> createContact(@RequestBody List<ContactsDto> verboiceContactDtos, @PathVariable Integer campaignId) {
 
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date createdAt = null;
@@ -47,6 +50,4 @@ public class ContactController {
 
     }
 
-
-
-    }
+}

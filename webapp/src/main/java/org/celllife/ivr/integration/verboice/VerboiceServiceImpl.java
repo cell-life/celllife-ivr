@@ -27,7 +27,7 @@ public class VerboiceServiceImpl implements VerboiceService {
      * @throws Exception
      */
     @Override
-    public String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, String password, int messageNumber) throws Exception{
+    public String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, String password, int messageNumber) throws Exception {
 
         String response = null;
         String url = verboiceBaseUrl;
@@ -81,6 +81,5 @@ public class VerboiceServiceImpl implements VerboiceService {
         return response;
 
     }
-
 
 }

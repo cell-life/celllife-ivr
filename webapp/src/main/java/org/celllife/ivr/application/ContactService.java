@@ -1,6 +1,7 @@
 package org.celllife.ivr.application;
 
 import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.exception.ContactExistsException;
 
 import java.util.List;
 
@@ -8,11 +9,11 @@ public interface ContactService {
 
     public List<Contact> getAllContacts();
 
-    public Contact saveContact(Contact contact) throws Exception;
+    public Contact saveContact(Contact contact) throws ContactExistsException;
 
     public void deleteAll();
 
-    public void saveContacts(List<Contact> contacts) throws Exception;
+    public List<String> saveContacts(List<Contact> contacts);
 
     public List<Contact> findContactsInCampaign(Long campaignId);
 

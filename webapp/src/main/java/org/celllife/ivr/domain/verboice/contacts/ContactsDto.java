@@ -1,8 +1,6 @@
-package org.celllife.ivr.domain.verboice.contact;
+package org.celllife.ivr.domain.verboice.contacts;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 public class ContactsDto implements Serializable {
 

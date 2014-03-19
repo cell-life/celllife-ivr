@@ -3,7 +3,6 @@ package org.celllife.ivr.application;
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.contact.ContactRepository;
 import org.celllife.ivr.domain.exception.ContactExistsException;
-import org.celllife.ivr.domain.exception.IvrException;
 import org.dozer.util.IteratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ public class ContactServiceImpl implements ContactService {
     public Contact saveContact(Contact contact) throws ContactExistsException {
         if ((contact.getId() == null)) {
             if (msisdnExists(contact.getMsisdn())) {
-                log.warn("A contact with msisdn " + contact.getMsisdn() + " already exists.");
+                log.warn("A contact with msisdn " + contact.getMsisdn() + " already exists and cannot be added to the database again.");
                 throw new ContactExistsException("A contact with msisdn " + contact.getMsisdn() + " already exists.");
             } else {
                 return contactRepository.save(contact);
@@ -47,7 +46,7 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public void saveContacts(List<Contact> contacts) throws Exception {
+    public List<String> saveContacts(List<Contact> contacts) {
         List<String> failedContacts = new ArrayList<>();
         for (Contact contact : contacts) {
             try {
@@ -57,9 +56,7 @@ public class ContactServiceImpl implements ContactService {
                 failedContacts.add(contact.getMsisdn());
             }
         }
-        if (failedContacts.size() > 0) {
-            throw new IvrException("Some contacts could not be saved because their msisdns already exist.");
-        }
+        return failedContacts;
     }
 
     @Override
