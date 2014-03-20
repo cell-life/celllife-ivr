@@ -1,6 +1,8 @@
 package org.celllife.ivr.integration.verboice;
 
 import org.celllife.ivr.domain.contact.Contact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import java.net.URLEncoder;
 @Service
 public class VerboiceServiceImpl implements VerboiceService {
 
+    private static Logger log = LoggerFactory.getLogger(VerboiceServiceImpl.class);
+
     @Autowired
     VerboiceClient verboiceClient;
 
@@ -18,7 +22,7 @@ public class VerboiceServiceImpl implements VerboiceService {
     private String verboiceBaseUrl;
 
     /**
-     *
+     * Enqueues call to Verboice
      * @param channelName
      * @param callFlowName
      * @param scheduleName
@@ -42,6 +46,8 @@ public class VerboiceServiceImpl implements VerboiceService {
             e.printStackTrace();
         }
 
+        log.debug("Enqueueing call to Verboice. HTTP GET " + url);
+
         response = verboiceClient.get(url);
 
         return response;
@@ -49,7 +55,7 @@ public class VerboiceServiceImpl implements VerboiceService {
     }
 
     /**
-     *
+     * Enqueues call to Verboice
      * @param channelName
      * @param callFlowName
      * @param scheduleName
@@ -69,11 +75,12 @@ public class VerboiceServiceImpl implements VerboiceService {
             url = url.concat("&address=" + contact.getMsisdn());
             url = url.concat("&call_flow=" + URLEncoder.encode(callFlowName, "UTF-8"));
             url = url.concat("&schedule=" + URLEncoder.encode(scheduleName, "UTF-8"));
-            url = url.concat("&vars[password]=" + contact.getPassword());
             url = url.concat("&vars[message]=" + messageNumber);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+
+        log.debug("Enqueueing call to Verboice. HTTP GET " + url);
 
         response = verboiceClient.get(url);
 

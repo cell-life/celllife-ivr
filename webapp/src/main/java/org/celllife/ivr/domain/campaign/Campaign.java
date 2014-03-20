@@ -62,7 +62,7 @@ public class Campaign implements Serializable {
 
 	}
 
-    public Campaign(Long id, String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName) {
+    public Campaign(Long id, String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName, Long verboiceProjectId) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -72,9 +72,10 @@ public class Campaign implements Serializable {
         this.callFlowName = callFlowName;
         this.channelName = channelName;
         this.scheduleName = scheduleName;
+        this.verboiceProjectId = verboiceProjectId;
     }
 
-    public Campaign(String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName) {
+    public Campaign(String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName, Long verboiceProjectId) {
         this.name = name;
         this.type = type;
         this.description = description;
@@ -83,6 +84,7 @@ public class Campaign implements Serializable {
         this.callFlowName = callFlowName;
         this.channelName = channelName;
         this.scheduleName = scheduleName;
+        this.verboiceProjectId = verboiceProjectId;
     }
 
     public Long getId() {
@@ -207,6 +209,7 @@ public class Campaign implements Serializable {
 
     public CampaignDto getCampaignDto() {
         CampaignDto campaignDto = new CampaignDto();
+        campaignDto.setId(this.getId());
         campaignDto.setName(this.getName());
         campaignDto.setDescription(this.getDescription());
         campaignDto.setDuration(this.getDuration());
@@ -214,6 +217,7 @@ public class Campaign implements Serializable {
         campaignDto.setCallFlowName(this.getCallFlowName());
         campaignDto.setChannelName(this.getChannelName());
         campaignDto.setScheduleName(this.getScheduleName());
+        campaignDto.setVerboiceProjectId(this.getVerboiceProjectId());
         return campaignDto;
     }
 

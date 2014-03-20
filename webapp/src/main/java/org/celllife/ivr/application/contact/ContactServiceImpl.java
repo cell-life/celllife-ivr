@@ -33,8 +33,8 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public Contact saveContact(Contact contact) throws ContactExistsException {
         if ((contact.getId() == null)) {
-            if (msisdnExists(contact.getMsisdn())) {
-                log.warn("A contact with msisdn " + contact.getMsisdn() + " already exists and cannot be added to the database again.");
+            if (contactExists(contact.getMsisdn(), contact.getCampaignId())) {
+                log.warn("A contact with msisdn " + contact.getMsisdn() + " already exists in campaign " + contact.getCampaignId() + " and cannot be added to the database again.");
                 throw new ContactExistsException("A contact with msisdn " + contact.getMsisdn() + " already exists.");
             } else {
                 return contactRepository.save(contact);
@@ -72,6 +72,15 @@ public class ContactServiceImpl implements ContactService {
     @Override
     public boolean msisdnExists(String msisdn) {
         if (findContactByMsisdn(msisdn).size() >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean contactExists(String msisdn, Long campaignId) {
+        List<Contact> contacts = IteratorUtils.toList(contactRepository.findContactByMsisdnAndCampaign(msisdn,campaignId).iterator());
+        if (contacts.size() >= 1) {
             return true;
         }
         return false;

@@ -54,4 +54,6 @@ public interface ContactService {
      */
     public boolean msisdnExists(String msisdn);
 
+    public boolean contactExists(String msisdn, Long campaignId);
+
 }

@@ -71,7 +71,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
         try {
             response = verboiceService.enqueueCall(channelName, callFlowName, scheduleName, msisdn, messageNumber);
         } catch (Exception e) {
-            throw new IvrException("Could not enqueue call to verboice.");
+            throw new IvrException("Could not enqueue call to verboice. Reason: " + e.getMessage());
         }
 
         Map<String, String> responseVariables;
@@ -102,7 +102,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     @Transactional("transactionManagerVerboice")
     private Integer createContactFromCelllifeContactAndSave(Contact contact, Campaign campaign, Integer projectVariableId) throws VerboiceDatabaseException {
 
-        Long existingContacts = contactAddressesRepository.findTotalContactsWithMsisdn(contact.getMsisdn());
+        Long existingContacts = contactAddressesRepository.findTotalContactsWithMsisdnInProject(contact.getMsisdn(), campaign.getVerboiceProjectId().intValue());
 
         if (existingContacts == 0) {
 
@@ -121,7 +121,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         } else {
 
-            throw new VerboiceDatabaseException("Error saving contact to Verboice Database. Contact " + contact.getMsisdn() + " already exists in the verboice database. ");
+            throw new VerboiceDatabaseException("Error saving contact to Verboice Database. Contact " + contact.getMsisdn() + " already exists in the verboice project "  + campaign.getVerboiceProjectId() + " and cannot be added again.");
 
         }
 
@@ -147,10 +147,8 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
                 Integer returnedId = createContactFromCelllifeContactAndSave(contact, campaign, projectVariablesList.get(0).getId());
                 contact.setVerboiceContactId(returnedId);
                 contactService.saveContact(contact);
-            } catch (VerboiceDatabaseException e) {
+            } catch (VerboiceDatabaseException | ContactExistsException e) {
                 failedNumbers.add(contact.getMsisdn());
-            } catch (ContactExistsException e) {
-                log.warn("An error occurred while trying to save contact with msisdn " + contact.getMsisdn(), e);
             }
         }
 

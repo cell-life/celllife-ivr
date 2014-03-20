@@ -26,7 +26,7 @@ public class CampaignServiceTest extends TestConfiguration {
     @Test
     public void testAddMessagesToCampaign() throws Exception {
 
-        Campaign campaign = new Campaign("test", CampaignType.DAILY, "test campaign", 1, 3, "","","");
+        Campaign campaign = new Campaign("test", CampaignType.DAILY, "test campaign", 1, 3, "","","",1L);
         campaign = campaignService.saveCampaign(campaign);
 
         List<Integer> verboiceMessageNumbers = new ArrayList<>();

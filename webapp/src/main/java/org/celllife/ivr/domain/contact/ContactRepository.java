@@ -13,6 +13,11 @@ public interface ContactRepository extends PagingAndSortingRepository<Contact, L
 
     @Query("select new org.celllife.ivr.domain.contact.Contact(c.id, c.msisdn, c.password, c.campaignId, c.progress) " +
             "from Contact c " +
+            "where c.msisdn like ('%' || :msisdn || '%') and c.campaignId= :campaignId")
+    Iterable<Contact> findContactByMsisdnAndCampaign(@Param("msisdn") String msisdn, @Param("campaignId") Long campaignId);
+
+    @Query("select new org.celllife.ivr.domain.contact.Contact(c.id, c.msisdn, c.password, c.campaignId, c.progress) " +
+            "from Contact c " +
             "where c.campaignId = :campaignId")
     Iterable<Contact> findContactsInCampaign(@Param("campaignId") Long campaignId);
 

@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -24,7 +25,9 @@ public class ContactServiceTest extends TestConfiguration {
     @Before
     public void setUp() throws ContactExistsException, Exception {
         contactService.deleteAll();
-        contactService.saveContact(new Contact("27724194158","1234", 1L, 0));
+        List<Contact> contactList = new ArrayList<Contact>();
+        contactList.add(new Contact("27724194158","1234", 1L, 0));
+        contactService.saveContacts(contactList);
     }
 
     @Test

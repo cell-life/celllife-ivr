@@ -39,7 +39,7 @@ public class RelativeCampaignJobTest extends TestConfiguration{
     public void testGetMessageForContact() throws Exception {
 
         // Create and save campaign
-        Campaign campaign = new Campaign("test", CampaignType.DAILY, "test campaign", 1, 3, "","","");
+        Campaign campaign = new Campaign("test", CampaignType.DAILY, "test campaign", 1, 3, "","","",1L);
         campaign = campaignService.saveCampaign(campaign);
 
         // Create and save messages

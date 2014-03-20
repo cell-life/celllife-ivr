@@ -1,10 +1,13 @@
 package org.celllife.ivr.interfaces.service;
 
 import org.celllife.ivr.application.campaign.CampaignService;
+import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignDto;
 import org.celllife.ivr.domain.campaign.CampaignStatus;
 import org.celllife.ivr.domain.campaign.CampaignType;
+import org.celllife.ivr.domain.exception.IvrException;
+import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +34,70 @@ public class CampaignController {
     @Autowired
     CampaignService campaignService;
 
+    @Autowired
+    CampaignMessageService campaignMessageService;
+
     @ResponseBody
-    @RequestMapping(method = RequestMethod.POST, value= "/service/campaigns")
-    public ResponseEntity<String> createCampaign(@RequestBody List<CampaignDto> campaignDtos){
+    @RequestMapping(method = RequestMethod.POST, value= "/service/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<CampaignDto> createCampaign(@RequestBody List<CampaignDto> campaignDtos) throws IvrException{
 
         CampaignDto campaignDto = campaignDtos.get(0);
 
         if (campaignDtos.size() > 1) {
-            return new ResponseEntity<String>("Unfortunately you can only add one campaign at a time.", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new IvrException("You can only add one campaign at a time!");
         }
 
-        Campaign campaign = new Campaign(campaignDto.getName(), CampaignType.DAILY, campaignDto.getDescription(), campaignDto.getTimesPerDay(), campaignDto.getDuration(), campaignDto.getCallFlowName(), campaignDto.getChannelName(), campaignDto.getScheduleName());
+        Campaign campaign = new Campaign(campaignDto.getName(), CampaignType.DAILY, campaignDto.getDescription(), campaignDto.getTimesPerDay(), campaignDto.getDuration(), campaignDto.getCallFlowName(), campaignDto.getChannelName(), campaignDto.getScheduleName(), campaignDto.getVerboiceProjectId());
         campaign.setStatus(CampaignStatus.ACTIVE);
         campaign.setStartDate(new Date());
         campaign = campaignService.saveCampaign(campaign);
 
-        return new ResponseEntity<String>("Campaign created with id " + campaign.getId(),HttpStatus.OK);
+        List<CampaignDto> campaignDtoList = new ArrayList<>();
+        campaignDtoList.add(campaign.getCampaignDto());
+
+        return campaignDtoList;
+
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT, value= "/service/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<CampaignDto> updateCampaign(@RequestBody List<CampaignDto> campaignDtos) throws IvrException{
+
+        CampaignDto campaignDto = campaignDtos.get(0);
+
+        if (campaignDtos.size() > 1) {
+            throw new IvrException("You can only update one campaign at a time!");
+        }
+
+        Campaign campaign = campaignService.getCampaign(campaignDto.getId());
+
+        if (campaign == null) {
+            throw new IvrException("A campaign with this ID doesn't exist!");
+        }
+
+        if (campaignDto.getVerboiceProjectId() != null)
+            campaign.setVerboiceProjectId(campaignDto.getVerboiceProjectId());
+        if (campaignDto.getScheduleName() != null)
+            campaign.setScheduleName(campaignDto.getScheduleName());
+        if (campaignDto.getChannelName() != null)
+            campaign.setChannelName(campaignDto.getChannelName());
+        if (campaignDto.getCallFlowName() != null)
+            campaign.setCallFlowName(campaignDto.getCallFlowName());
+        if (campaignDto.getDescription() != null)
+            campaign.setDescription(campaignDto.getDescription());
+        if (campaignDto.getDuration() != null)
+            campaign.setDuration(campaignDto.getDuration());
+        if (campaignDto.getName() != null)
+            campaign.setName(campaignDto.getName());
+        if (campaignDto.getTimesPerDay() != null)
+            campaign.setTimesPerDay(campaignDto.getTimesPerDay());
+
+        campaign = campaignService.saveCampaign(campaign);
+
+        List<CampaignDto> campaignDtoList = new ArrayList<>();
+        campaignDtoList.add(campaign.getCampaignDto());
+
+        return campaignDtoList;
 
     }
 
@@ -68,7 +119,7 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/campaignMessages")
-    public ResponseEntity<String> addMessagesToCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Integer campaignId) {
+    public ResponseEntity<String> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId) {
 
         List<Integer> verboiceMessageNumbers = new ArrayList<>();
 
@@ -90,13 +141,29 @@ public class CampaignController {
         }
 
         try {
-            campaignService.setMessagesForCampaign(campaignId.longValue(), verboiceMessageNumbers, messageTimesOfDay);
+            campaignService.setMessagesForCampaign(campaignId, verboiceMessageNumbers, messageTimesOfDay);
         } catch (Exception e) {
             log.warn("Error Adding Messages to Campaign. " + e.getMessage(), e);
             return new ResponseEntity<String>("Error Adding Messages to Campaign. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity<String>("Successfully added messages.", HttpStatus.OK);
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/service/campaigns/{campaignId}/campaignMessages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<CampaignMessageDto> getCampaignMessages(@PathVariable Long campaignId) {
+
+        List<CampaignMessage> campaignMessages = campaignMessageService.findMessagesInCampaign(campaignId);
+
+        Collection<CampaignMessageDto> campaignMessageDtos = new ArrayList<>();
+
+        for (CampaignMessage campaignMessage : campaignMessages) {
+            campaignMessageDtos.add(campaignMessage.getCampaignMessageDto());
+        }
+
+        return campaignMessageDtos;
 
     }
 

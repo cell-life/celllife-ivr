@@ -2,6 +2,8 @@ package org.celllife.ivr.domain.message;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -57,6 +59,14 @@ public class CampaignMessage implements Serializable {
         this.messageTime = messageTime;
         this.messageSlot = msgSlot;
         this.campaignId = campaignId;
+    }
+
+    public CampaignMessageDto getCampaignMessageDto() {
+        CampaignMessageDto campaignMessageDto = new CampaignMessageDto();
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        campaignMessageDto.setMessageTimeOfDay(dateFormat.format(this.messageTime));
+        campaignMessageDto.setVerboiceMessageNumber(this.verboiceMessageNumber);
+        return campaignMessageDto;
     }
 
 	public int getVerboiceMessageNumber() {

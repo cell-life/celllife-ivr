@@ -4,6 +4,10 @@ import java.io.Serializable;
 
 public class CampaignDto implements Serializable {
 
+    private static final long serialVersionUID = 4778561416998723875L;
+
+    private long id;
+
     private String name;
     private String description;
     private Integer timesPerDay;
@@ -11,6 +15,15 @@ public class CampaignDto implements Serializable {
     private String callFlowName;
     private String channelName;
     private String scheduleName;
+    private Long verboiceProjectId;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -66,5 +79,13 @@ public class CampaignDto implements Serializable {
 
     public void setScheduleName(String scheduleName) {
         this.scheduleName = scheduleName;
+    }
+
+    public Long getVerboiceProjectId() {
+        return verboiceProjectId;
+    }
+
+    public void setVerboiceProjectId(Long verboiceProjectId) {
+        this.verboiceProjectId = verboiceProjectId;
     }
 }

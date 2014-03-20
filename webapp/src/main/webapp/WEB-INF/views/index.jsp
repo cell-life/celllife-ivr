@@ -94,13 +94,27 @@
                 contentType: false,
                 processData: false,
                 success: function (data) {
-                    document.getElementById("successMessage").innerHTML = "Contacts added successfully."
-                    $("#successMessage").show();
-                    $("#failureMessage").hide();
+
+                    if (data.length > 0) {
+                        var errorString = "";
+                        $.each(data, function(key, val) {
+                            errorString = errorString + "<li>" + val.msisdn + "</li>";
+                        });
+                        document.getElementById("failureMessage").innerHTML = "Some contacts could not be added, possibly because they already exist. Contacts that failed: <ul>" + errorString + "</ul>";
+                        $("#failureMessage").show();
+                        $("#successMessage").hide();
+
+                    }  else {
+
+                        document.getElementById("successMessage").innerHTML = "Contacts added successfully.";
+                        $("#successMessage").show();
+                        $("#failureMessage").hide();
+
+                    }
 
                 },
-                error: function (data) {
-                    document.getElementById("failureMessage").innerHTML = "Error adding contacts."
+                error: function (jqXHR, textStatus, errorThrown) {
+                    document.getElementById("failureMessage").innerHTML = "Error code: " + jqXHR.status + "<br> Message: " + jqXHR.statusText;
                     $("#failureMessage").show();
                     $("#successMessage").hide();
                 }

@@ -2,12 +2,15 @@ package org.celllife.ivr.interfaces.service;
 
 import org.celllife.ivr.application.contact.ContactService;
 import org.celllife.ivr.application.verboice.VerboiceApplicationService;
+import org.celllife.ivr.domain.campaign.CampaignDto;
 import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.contact.FailedContactDto;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +24,7 @@ import org.supercsv.prefs.CsvPreference;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -35,41 +39,40 @@ public class CsvUploadController {
     @Autowired
     VerboiceApplicationService verboiceApplicationService;
 
-    @RequestMapping(value = "/service/campaign/{campaignId}/contacts", method = RequestMethod.POST)
-    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile uploadedFile, @PathVariable Long campaignId) throws IOException {
+    @ResponseBody
+    @RequestMapping(value = "/service/campaign/{campaignId}/contacts", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<FailedContactDto> upload(@RequestParam("file") MultipartFile uploadedFile, @PathVariable Long campaignId) throws IOException, IvrException {
 
-        ICsvMapReader mapReader = new CsvMapReader(new InputStreamReader(uploadedFile.getInputStream()), CsvPreference.STANDARD_PREFERENCE);
+        CsvMapReader mapReader = new CsvMapReader(new InputStreamReader(uploadedFile.getInputStream()), CsvPreference.STANDARD_PREFERENCE);
 
-        try {
+        List<FailedContactDto> failedContactDtos = new ArrayList<FailedContactDto>();
 
-            final String[] header = {"msisdn", "password"};
-            final CellProcessor[] processors = getProcessors();
+        final String[] header = {"msisdn", "password"};
+        final CellProcessor[] processors = getProcessors();
 
-            Map<String, Object> contactMap;
-            List<Contact> contactList = new ArrayList<>();
+        Map<String, Object> contactMap;
+        List<Contact> contactList = new ArrayList<>();
 
-            while ((contactMap = mapReader.read(header, processors)) != null) {
-                Contact contact = new Contact(contactMap.get("msisdn").toString(), contactMap.get("password").toString(), campaignId, 0);
-                contactList.add(contact);
-            }
+        while ((contactMap = mapReader.read(header, processors)) != null) {
+            Contact contact = new Contact(contactMap.get("msisdn").toString(), contactMap.get("password").toString(), campaignId, 0);
+            contactList.add(contact);
+        }
 
-            List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
-            for (String number : failedNumbers) {
-                log.warn("The number " + number + " could not be added to the Verboice database, possibly because it already exists.");
-                contactList.remove(findIndexOfContactWithMsisdn(contactList, number));
-            }
+        List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
+        for (String number : failedNumbers) {
+            log.warn("The number " + number + " could not be added to the Verboice database, possibly because it already exists.");
+            failedContactDtos.add(new FailedContactDto(number));
+            contactList.remove(findIndexOfContactWithMsisdn(contactList, number));
+        }
 
-            failedNumbers = contactService.saveContacts(contactList);
-            // TODO: Send failed numbers back.
-
-        } catch(IvrException | IOException e) {
-            log.warn("Could not add contacts. Reason: " + e.getLocalizedMessage(), e);
-            mapReader.close();
-            return new ResponseEntity<String>("An error occurred while trying to add contacts. " + e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        List<String> locallyFailedNumbers = contactService.saveContacts(contactList);
+        for (String number : locallyFailedNumbers) {
+            log.warn("The number " + number + " could not be added to the local database.");
+            failedContactDtos.add(new FailedContactDto(number));
         }
 
         mapReader.close();
-        return new ResponseEntity<String>("Successfully added contacts.", HttpStatus.OK);
+        return failedContactDtos;
 
     }
 
