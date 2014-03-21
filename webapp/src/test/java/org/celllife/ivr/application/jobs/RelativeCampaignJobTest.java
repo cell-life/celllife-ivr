@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class RelativeCampaignJobTest extends TestConfiguration{
 
     @Autowired

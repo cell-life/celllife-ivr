@@ -24,7 +24,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
         "classpath:/META-INF/spring/spring-tx-verboice.xml",
         "classpath:/META-INF/spring-data/spring-data-jpa-verboice.xml"
 })
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class TestConfiguration {
 
 }

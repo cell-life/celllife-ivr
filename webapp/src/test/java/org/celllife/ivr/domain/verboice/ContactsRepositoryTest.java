@@ -13,6 +13,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.Date;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({
         "classpath:/META-INF/spring/spring-jdbc-verboice.xml",
