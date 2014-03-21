@@ -41,9 +41,6 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     VerboiceService verboiceService;
 
     @Autowired
-    ContactService contactService;
-
-    @Autowired
     CampaignService campaignService;
 
     JsonUtils jsonUtils = new JsonUtils();
@@ -106,10 +103,15 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         if (existingContacts == 0) {
 
+            Long numberOfContactsWithPassword = persistedVariablesRepository.findTotalVariablesWithValue(contact.getPassword());
+            if (numberOfContactsWithPassword > 0) {
+                throw new VerboiceDatabaseException("The contact " + contact.getMsisdn() + " has not been added because another contact has the same password.");
+            }
+
             Contacts verboiceContact = new Contacts(campaign.getVerboiceProjectId().intValue(), new Date(), new Date());
             verboiceContact = verboiceContactsRepository.save(verboiceContact);
             if (verboiceContact.getId() == null) {
-                throw new VerboiceDatabaseException("Error saving contact to Verboice Database. This contact has not been added.");
+                throw new VerboiceDatabaseException("There was an error saving contact " + contact.getMsisdn() + " to the database.");
             }
 
             ContactAddresses contactAddresses = new ContactAddresses(contact.getMsisdn(), verboiceContact.getId(), campaign.getVerboiceProjectId().intValue(), new Date(), new Date());
@@ -121,7 +123,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         } else {
 
-            throw new VerboiceDatabaseException("Error saving contact to Verboice Database. Contact " + contact.getMsisdn() + " already exists in the verboice project "  + campaign.getVerboiceProjectId() + " and cannot be added again.");
+            throw new VerboiceDatabaseException("Contact " + contact.getMsisdn() + " already exists in the verboice project "  + campaign.getVerboiceProjectId() + " and cannot be added again.");
 
         }
 
@@ -132,6 +134,9 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     public List<String> createContactsAndSave(List<Contact> contacts, Long campaignId) throws IvrException {
 
         Campaign campaign = campaignService.getCampaign(campaignId);
+        if (campaign == null) {
+            throw new IvrException("The campaign ID is not valid.");
+        }
 
         Iterable<ProjectVariables> projectVariables = projectVariablesRepository.findByNameAndProject(campaign.getVerboiceProjectId().intValue(), "password");
         List<ProjectVariables> projectVariablesList = IteratorUtils.toList(projectVariables.iterator());
@@ -143,11 +148,12 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
         List<String> failedNumbers = new ArrayList<>();
 
         for (Contact contact : contacts) {
+            log.debug("Attempting to save contact " + contact.getMsisdn() + " to Verboice. ");
             try {
                 Integer returnedId = createContactFromCelllifeContactAndSave(contact, campaign, projectVariablesList.get(0).getId());
-                contact.setVerboiceContactId(returnedId);
-                contactService.saveContact(contact);
-            } catch (VerboiceDatabaseException | ContactExistsException e) {
+                /* TODO: use returnId somehow */
+            } catch (VerboiceDatabaseException e) {
+                log.warn("Contact not added to verboice. Reason: " + e.getLocalizedMessage());
                 failedNumbers.add(contact.getMsisdn());
             }
         }

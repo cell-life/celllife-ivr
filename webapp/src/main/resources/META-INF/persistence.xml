@@ -7,7 +7,6 @@
         <class>org.celllife.ivr.domain.message.CampaignMessage</class>
         <class>org.celllife.ivr.domain.campaign.Campaign</class>
         <class>org.celllife.ivr.domain.callog.CallLog</class>
-        <!--<class>org.springframework.scheduling.quartz.SchedulerFactoryBean</class>-->
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
     </persistence-unit>

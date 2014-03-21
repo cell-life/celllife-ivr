@@ -72,6 +72,20 @@
 
 </div>
 
+<div class="modal fade" id="waitModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-backdrop="static" data-keyboard="false" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Uploading Contacts</h4>
+            </div>
+            <div class="modal-body">
+                <p>Please wait.&hellip;</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 
     $(document).ready(function () {
@@ -83,7 +97,9 @@
 
             event.preventDefault();
 
-            var fd = new FormData(document.getElementById("uploadForm"))
+            $("#uploadButton").prop('disabled', true);
+
+            var fd = new FormData(document.getElementById("uploadForm"));
 
             $.ajax({
                 url: 'service/campaign/' + document.querySelector('#campaignId').value + '/contacts',
@@ -94,6 +110,8 @@
                 contentType: false,
                 processData: false,
                 success: function (data) {
+
+                    $("#uploadButton").prop('disabled', false);
 
                     if (data.length > 0) {
                         var errorString = "";
@@ -114,6 +132,9 @@
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
+
+                    $("#uploadButton").prop('disabled', false);
+
                     document.getElementById("failureMessage").innerHTML = "Error code: " + jqXHR.status + "<br> Message: " + jqXHR.statusText;
                     $("#failureMessage").show();
                     $("#successMessage").hide();

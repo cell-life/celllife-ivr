@@ -23,15 +23,15 @@
 
     <!-- Cell-Life -->
 
-    <logger name="org.celllife" level="DEBUG" />
+    <logger name="org.celllife" level="WARN" />
 
     <!-- Hibernate -->
 
-    <logger name="org.hibernate" level="DEBUG" />
+    <logger name="org.hibernate" level="WARN" />
 
     <!-- Spring -->
 
-    <logger name="org.springframework" level="DEBUG" />
+    <logger name="org.springframework" level="WARN" />
 
     <!-- C3P0 Connection Pool -->
 

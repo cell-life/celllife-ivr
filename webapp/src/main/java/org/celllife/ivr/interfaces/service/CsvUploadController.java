@@ -60,7 +60,6 @@ public class CsvUploadController {
 
         List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
         for (String number : failedNumbers) {
-            log.warn("The number " + number + " could not be added to the Verboice database, possibly because it already exists.");
             failedContactDtos.add(new FailedContactDto(number));
             contactList.remove(findIndexOfContactWithMsisdn(contactList, number));
         }
