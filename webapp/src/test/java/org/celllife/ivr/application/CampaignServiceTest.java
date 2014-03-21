@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public class CampaignServiceTest extends TestConfiguration {
 
     @Autowired

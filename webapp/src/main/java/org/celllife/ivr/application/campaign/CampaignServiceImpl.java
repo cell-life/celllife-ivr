@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.*;
@@ -122,14 +123,17 @@ public class CampaignServiceImpl implements CampaignService{
         return name;
     }
 
+    @Transactional("transactionManager")
     public Campaign getCampaign(Long id) {
         return campaignRepository.findOne(id);
     }
 
+    @Transactional("transactionManager")
     public Campaign saveCampaign(Campaign campaign) {
         return campaignRepository.save(campaign);
     }
 
+    @Transactional("transactionManager")
     private String getTriggerNameForCampaign(Long campaignId, Date msgTime, Integer msgSlot) {
         Campaign campaign = getCampaign(campaignId);
         String name = MessageFormat.format("{0}-[slot={1}]-[time={2,time,medium}]", campaign.getName(), msgSlot, msgTime);
@@ -141,11 +145,13 @@ public class CampaignServiceImpl implements CampaignService{
         return quartzService.getScheduler();
     }
 
+    @Transactional("transactionManager")
     @Override
     public void deleteAllCampaigns() {
         campaignRepository.deleteAll();
     }
 
+    @Transactional("transactionManager")
     @Override
     public List<Campaign> getAllCampaigns() {
         return IteratorUtils.toList(campaignRepository.findAll().iterator());
