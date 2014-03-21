@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
-@Service
 public class RelativeCampaignJobRunner extends QuartzJobBean {
 	
 	public static final String PROP_CAMPAIGN_ID = "campaignId";
