@@ -6,7 +6,7 @@
     <bean id="verboiceEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="verboiceDataSource"/>
         <property name="persistenceUnitName" value="org.celllife.ivr.verboice.pu"/>
-        <property name="packagesToScan" value="org.celllife.ivr.domain" />
+        <property name="packagesToScan" value="org.celllife.ivr.domain.verboice" />
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">${database.verboice.hibernate.dialect}</prop>
