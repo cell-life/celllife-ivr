@@ -4,10 +4,12 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.QuartzJobBean;
+import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 
+@Service
 public class BeanMethodInvokerJob extends QuartzJobBean {
 	
 	private ApplicationContext applicationContext;
