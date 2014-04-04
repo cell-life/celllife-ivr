@@ -7,6 +7,6 @@ public interface VerboiceService {
 
     String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber) throws Exception;
 
-    String enqueueCall(String channelName, String callFlowName, String scheduleName, Contact contact, int messageNumber)  throws Exception;
+    String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws Exception;
 
 }

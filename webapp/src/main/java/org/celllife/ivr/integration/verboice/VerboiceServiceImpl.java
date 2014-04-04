@@ -54,28 +54,19 @@ public class VerboiceServiceImpl implements VerboiceService {
 
     }
 
-    /**
-     * Enqueues call to Verboice
-     * @param channelName
-     * @param callFlowName
-     * @param scheduleName
-     * @param contact
-     * @param messageNumber
-     * @return string of format {"call_id":58,"state":"queued"}
-     * @throws Exception
-     */
     @Override
-    public String enqueueCall(String channelName, String callFlowName, String scheduleName, Contact contact, int messageNumber)  throws Exception {
+    public String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws Exception {
 
         String response = null;
         String url = verboiceBaseUrl;
         try {
             url = url.concat("api/call?");
             url = url.concat("channel=" + URLEncoder.encode(channelName, "UTF-8"));
-            url = url.concat("&address=" + contact.getMsisdn());
+            url = url.concat("&address=" + msisdn);
             url = url.concat("&call_flow=" + URLEncoder.encode(callFlowName, "UTF-8"));
             url = url.concat("&schedule=" + URLEncoder.encode(scheduleName, "UTF-8"));
             url = url.concat("&vars[message]=" + messageNumber);
+            url = url.concat("&vars[password]=" + password);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

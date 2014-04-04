@@ -1,22 +1,30 @@
 package org.celllife.ivr.interfaces.service;
 
+import org.celllife.ivr.application.contact.ContactService;
+import org.celllife.ivr.domain.campaign.Campaign;
+import org.celllife.ivr.domain.campaign.CampaignDto;
+import org.celllife.ivr.domain.campaign.CampaignStatus;
+import org.celllife.ivr.domain.campaign.CampaignType;
+import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.contact.ContactDto;
+import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.verboice.contacts.Contacts;
-import org.celllife.ivr.domain.verboice.contacts.ContactsDto;
 import org.celllife.ivr.domain.verboice.contacts.ContactsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -26,27 +34,68 @@ public class ContactController {
     private static Logger log = LoggerFactory.getLogger(ContactController.class);
 
     @Autowired
-    ContactsRepository verboiceContactRepository;
+    ContactService contactService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/contacts")
-    public ResponseEntity<String> createContact(@RequestBody List<ContactsDto> verboiceContactDtos, @PathVariable Integer campaignId) {
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/contacts", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ContactDto createContact(HttpServletResponse response, @RequestBody Collection<ContactDto> contactDtos, @PathVariable Long campaignId) throws IvrException {
 
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date createdAt = null;
-        Date updatedAt = null;
+            ContactDto contactDto = contactDtos.iterator().next();
 
-        try {
-            createdAt = (Date) formatter.parse(verboiceContactDtos.get(0).getCreatedAt());
-            updatedAt = (Date) formatter.parse(verboiceContactDtos.get(0).getUpdatedAt());
-        } catch (ParseException e) {
-            e.printStackTrace();
+            Contact contact = new Contact(contactDto.getMsisdn(), contactDto.getPassword(), campaignId, 0);
+            contact = contactService.saveContact(contact);
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            return contact.getContactDto();
+
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT, value = "/service/campaigns/{campaignId}/contacts/{contactId}")
+    public ContactDto updateContact(HttpServletResponse response, @RequestBody Collection<ContactDto> contactDtos, @PathVariable Long campaignId, @PathVariable Long contactId) throws IvrException {
+
+        ContactDto contactDto = contactDtos.iterator().next();
+        Contact contact = contactService.getContactById(contactId);
+
+        if (contactDto.getMsisdn() != null)
+            throw new IvrException("You cannot change the MSISDN of a contact. Rather add a new contact.");
+        if (contactDto.getPassword() != null)
+            contact.setPassword(contactDto.getPassword());
+        if (contactDto.getProgress() != null)
+            contact.setProgress(contactDto.getProgress());
+        if (contactDto.getCampaignId() != null)
+            throw new IvrException("You cannot change the campaign ID of a contact. Rather add a new contact.");
+
+        contact = contactService.saveContact(contact);
+
+        return contact.getContactDto();
+
+    }
+
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.DELETE, value = "/service/campaigns/{campaignId}/contacts/{contactId}")
+    public ContactDto deleteContact(HttpServletResponse response, @PathVariable Long campaignId, @PathVariable Long contactId) throws IvrException {
+
+        Contact contact = contactService.getContactById(contactId);
+        contact.setVoided(true);
+        contact = contactService.saveContact(contact);
+
+        return contact.getContactDto();
+
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/service/campaigns/{campaignId}/contacts", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Collection<ContactDto> getContactsInCampaign(@PathVariable Long campaignId) {
+
+        List<Contact> contacts = contactService.findContactsInCampaign(campaignId);
+
+        Collection<ContactDto> contactDtos = new ArrayList<>();
+
+        for (Contact contact : contacts) {
+            contactDtos.add(contact.getContactDto());
         }
 
-        Contacts verboiceContact = new Contacts(7, new Date(), new Date());
-
-        verboiceContact = verboiceContactRepository.save(verboiceContact);
-
-        return new ResponseEntity<String>("Successfully added contacts.", HttpStatus.OK);
+        return contactDtos;
 
     }
 

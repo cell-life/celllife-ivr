@@ -13,6 +13,8 @@ public interface ContactService {
      */
     public List<Contact> getAllContacts();
 
+    public Contact getContactById(Long id);
+
     /**
      * Saves a contact.
      * @param contact The contact to save.
@@ -39,6 +41,8 @@ public interface ContactService {
      * @return List of contacts.
      */
     public List<Contact> findContactsInCampaign(Long campaignId);
+
+    public List<Contact> findNonVoidedContactsInCampaign(Long campaignId);
 
     /**
      * Find contacts by msisdn.

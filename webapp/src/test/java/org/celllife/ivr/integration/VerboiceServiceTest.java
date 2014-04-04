@@ -20,7 +20,7 @@ public class VerboiceServiceTest extends TestConfiguration {
     @Test
     public void testEnqueueCall() throws Exception {
 
-        String response = verboiceService.enqueueCall("Skype Channel", "Call #1", "Test", "27724194158", 0);
+        String response = verboiceService.enqueueCallWithPassword("Stellies Skype", "Main Call Flow", "Stellies Schedule", "27724194158", 1, "2222");
 
     }
 

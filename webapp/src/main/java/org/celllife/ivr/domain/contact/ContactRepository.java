@@ -21,4 +21,9 @@ public interface ContactRepository extends PagingAndSortingRepository<Contact, L
             "where c.campaignId = :campaignId")
     Iterable<Contact> findContactsInCampaign(@Param("campaignId") Long campaignId);
 
+    @Query("select new org.celllife.ivr.domain.contact.Contact(c.id, c.msisdn, c.password, c.campaignId, c.progress) " +
+            "from Contact c " +
+            "where c.campaignId = :campaignId and c.voided = false")
+    Iterable<Contact> findNonVoidedContactsInCampaign(@Param("campaignId") Long campaignId);
+
 }

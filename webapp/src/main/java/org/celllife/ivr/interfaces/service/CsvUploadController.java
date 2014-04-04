@@ -9,6 +9,7 @@ import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +24,15 @@ import org.supercsv.prefs.CsvPreference;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 public class CsvUploadController {
 
     private static Logger log = LoggerFactory.getLogger(CsvUploadController.class);
+
+    @Value("${ivr.validation_regex}")
+    String validationRegex;
 
     @Autowired
     ContactService contactService;
@@ -53,21 +54,32 @@ public class CsvUploadController {
         Map<String, Object> contactMap;
         List<Contact> contactList = new ArrayList<>();
 
-        while ((contactMap = mapReader.read(header, processors)) != null) {
-            Contact contact = new Contact(contactMap.get("msisdn").toString(), contactMap.get("password").toString(), campaignId, 0);
-            contactList.add(contact);
+        contactMap = mapReader.read(header, processors);
+        if ( (!contactMap.get("msisdn").toString().equalsIgnoreCase("msisdn")) || (!contactMap.get("password").toString().equalsIgnoreCase("password"))) {
+            throw new IvrException("The column headers must be 'msisdn' and 'password'.");
         }
 
-        List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
+        while ((contactMap = mapReader.read(header, processors)) != null) {
+            String msisdn = contactMap.get("msisdn").toString();
+            String password = contactMap.get("password").toString();
+            if (msisdn.matches(validationRegex)) {
+                Contact contact = new Contact(msisdn, password, campaignId, 0);
+                contactList.add(contact);
+            } else {
+                failedContactDtos.add(new FailedContactDto(msisdn, "Number format is invalid. The number should start with 27."));
+            }
+        }
+
+        /*List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
         for (String number : failedNumbers) {
             failedContactDtos.add(new FailedContactDto(number));
             contactList.remove(findIndexOfContactWithMsisdn(contactList, number));
-        }
+        } */
 
         List<String> locallyFailedNumbers = contactService.saveContacts(contactList);
         for (String number : locallyFailedNumbers) {
             log.warn("The number " + number + " could not be added to the local database.");
-            failedContactDtos.add(new FailedContactDto(number));
+            failedContactDtos.add(new FailedContactDto(number, "Possibly this number already exists in the campaign."));
         }
 
         mapReader.close();
@@ -75,23 +87,17 @@ public class CsvUploadController {
 
     }
 
-    /**
-     * Sets up the processors used for the examples. There are 10 CSV columns, so 10 processors are defined. Empty
-     * columns are read as null (hence the NotNull() for mandatory columns).
-     *
-     * @return the cell processors
-     */
     private static CellProcessor[] getProcessors() {
 
         final CellProcessor[] processors = new CellProcessor[]{
-                new NotNull(), // firstName
+                new NotNull(),
                 new NotNull()
         };
 
         return processors;
     }
 
-    private int findIndexOfContactWithMsisdn(List<Contact> contactList, String value) {
+    /*private int findIndexOfContactWithMsisdn(List<Contact> contactList, String value) {
 
         int counter = 0;
 
@@ -103,5 +109,5 @@ public class CsvUploadController {
 
         return -1;
 
-    }
+    }*/
 }

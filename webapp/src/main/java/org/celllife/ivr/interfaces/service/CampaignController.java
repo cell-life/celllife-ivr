@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -39,7 +40,7 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value= "/service/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<CampaignDto> createCampaign(@RequestBody List<CampaignDto> campaignDtos) throws IvrException{
+    public Collection<CampaignDto> createCampaign(@RequestBody List<CampaignDto> campaignDtos, HttpServletResponse response) throws IvrException{
 
         CampaignDto campaignDto = campaignDtos.get(0);
 
@@ -55,28 +56,23 @@ public class CampaignController {
         List<CampaignDto> campaignDtoList = new ArrayList<>();
         campaignDtoList.add(campaign.getCampaignDto());
 
+        response.setStatus(HttpServletResponse.SC_CREATED);
         return campaignDtoList;
 
     }
 
     @ResponseBody
-    @RequestMapping(method = RequestMethod.PUT, value= "/service/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<CampaignDto> updateCampaign(@RequestBody List<CampaignDto> campaignDtos) throws IvrException{
+    @RequestMapping(method = RequestMethod.PUT, value= "/service/campaigns/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public CampaignDto updateCampaign(@RequestBody Collection<CampaignDto> campaignDtos, @PathVariable Long campaignId) throws IvrException{
 
-        CampaignDto campaignDto = campaignDtos.get(0);
+        CampaignDto campaignDto = campaignDtos.iterator().next();
 
-        if (campaignDtos.size() > 1) {
-            throw new IvrException("You can only update one campaign at a time!");
-        }
-
-        Campaign campaign = campaignService.getCampaign(campaignDto.getId());
+        Campaign campaign = campaignService.getCampaign(campaignId);
 
         if (campaign == null) {
             throw new IvrException("A campaign with this ID doesn't exist!");
         }
 
-        if (campaignDto.getVerboiceProjectId() != null)
-            campaign.setVerboiceProjectId(campaignDto.getVerboiceProjectId());
         if (campaignDto.getScheduleName() != null)
             campaign.setScheduleName(campaignDto.getScheduleName());
         if (campaignDto.getChannelName() != null)
@@ -94,10 +90,7 @@ public class CampaignController {
 
         campaign = campaignService.saveCampaign(campaign);
 
-        List<CampaignDto> campaignDtoList = new ArrayList<>();
-        campaignDtoList.add(campaign.getCampaignDto());
-
-        return campaignDtoList;
+        return campaign.getCampaignDto();
 
     }
 
@@ -116,6 +109,21 @@ public class CampaignController {
         return campaignDtos;
 
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/service/campaigns/{campaignId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public CampaignDto getCampaign(@PathVariable Long campaignId) throws IvrException {
+
+        Campaign campaign = campaignService.getCampaign(campaignId);
+
+        if (campaign == null) {
+            throw new IvrException("A campaign with this ID doesn't exist!");
+        }
+
+        return campaign.getCampaignDto();
+
+    }
+
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/campaignMessages")

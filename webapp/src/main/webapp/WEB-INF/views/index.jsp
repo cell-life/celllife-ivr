@@ -116,9 +116,9 @@
                     if (data.length > 0) {
                         var errorString = "";
                         $.each(data, function(key, val) {
-                            errorString = errorString + "<li>" + val.msisdn + "</li>";
+                            errorString = errorString + "<li>" + val.msisdn + ". Reason:  " + val.reasonForFailiure + "</li>";
                         });
-                        document.getElementById("failureMessage").innerHTML = "Some contacts could not be added, possibly because they already exist. Contacts that failed: <ul>" + errorString + "</ul>";
+                        document.getElementById("failureMessage").innerHTML = "Some contacts could not be added. Contacts that failed: <ul>" + errorString + "</ul>";
                         $("#failureMessage").show();
                         $("#successMessage").hide();
 

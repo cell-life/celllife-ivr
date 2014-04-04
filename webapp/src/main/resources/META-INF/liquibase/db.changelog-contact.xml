@@ -21,4 +21,22 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="contacts-3" author="dine@cell-life.org">
+        <preConditions>
+            <not>
+                <changeSetExecuted id="contacts-3" author="dine@cell-life.org" changeLogFile="db.changelog-contact.xml" />
+            </not>
+        </preConditions>
+        <addColumn tableName="contact">
+            <column name="voided" type="BOOLEAN" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="contacts-4" author="dine@cell-life.org">
+        <update tableName="contact">
+            <column name="voided" type="BOOLEAN" value="0"/>
+            <where>voided is null</where>
+        </update>
+    </changeSet>
+
 </databaseChangeLog>

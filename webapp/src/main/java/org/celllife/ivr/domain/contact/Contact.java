@@ -1,5 +1,8 @@
 package org.celllife.ivr.domain.contact;
 
+import org.celllife.ivr.domain.campaign.CampaignDto;
+import org.celllife.ivr.domain.exception.InvalidMsisdnException;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -36,6 +39,9 @@ public class Contact implements Serializable {
 
     private Integer verboiceContactId;
 
+    @Column(columnDefinition = "BIT", length = 1)
+    private boolean voided = false;
+
     public Contact() {
 
     }
@@ -48,11 +54,25 @@ public class Contact implements Serializable {
         setCampaignId(campaignId);
     }
 
-    public Contact(String msisdn, String password, Long campaignId, int progress) {
+    public Contact(String msisdn, String password, Long campaignId, int progress) throws InvalidMsisdnException {
+        if (isMsisdnNumeric(msisdn) == false) {
+            throw new InvalidMsisdnException("The number " + msisdn + " contains characters that are not numeric.");
+        }
         setMsisdn(msisdn);
         setPassword(password);
         setProgress(progress);
         setCampaignId(campaignId);
+    }
+
+    public ContactDto getContactDto() {
+        ContactDto contactDto = new ContactDto();
+        contactDto.setId(this.getId());
+        contactDto.setMsisdn(this.getMsisdn());
+        contactDto.setCampaignId(this.getCampaignId());
+        contactDto.setProgress(this.getProgress());
+        contactDto.setPassword(this.getPassword());
+        contactDto.setVoided(this.isVoided());
+        return contactDto;
     }
 
     public Long getId() {
@@ -101,6 +121,24 @@ public class Contact implements Serializable {
 
     public void setVerboiceContactId(Integer verboiceContactId) {
         this.verboiceContactId = verboiceContactId;
+    }
+
+    public boolean isVoided() {
+        return voided;
+    }
+
+    public void setVoided(boolean voided) {
+        this.voided = voided;
+    }
+
+    protected boolean isMsisdnNumeric(String msisdn) {
+
+        if (msisdn.matches("[0-9]+")) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override

@@ -26,8 +26,18 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
+    public Contact getContactById(Long id) {
+        return contactRepository.findOne(id);
+    }
+
+    @Override
     public List<Contact> findContactsInCampaign(Long campaignId) {
         return IteratorUtils.toList(contactRepository.findContactsInCampaign(campaignId).iterator());
+    }
+
+    @Override
+    public List<Contact> findNonVoidedContactsInCampaign(Long campaignId) {
+        return IteratorUtils.toList(contactRepository.findNonVoidedContactsInCampaign(campaignId).iterator());
     }
 
     @Override

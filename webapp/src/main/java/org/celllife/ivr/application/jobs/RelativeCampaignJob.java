@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -65,14 +64,14 @@ public class RelativeCampaignJob {
         Campaign campaign = campaignService.getCampaign(campaignId);
 
         List<CampaignMessage> campaignMessages = campaignMessageService.findMessagesForTimeSlot(campaignId, messageTime, messageSlot);
-        List<Contact> campaignContacts = contactService.findContactsInCampaign(campaignId);
+        List<Contact> campaignContacts = contactService.findNonVoidedContactsInCampaign(campaignId);
 
         for (Contact campaignContact : campaignContacts) {
 
             CampaignMessage campaignMessage = getMessageForContact(campaignContact, campaignMessages);
 
             if (campaignMessage != null) {
-                verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignMessage.getVerboiceMessageNumber());
+                verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignMessage.getVerboiceMessageNumber(), campaignContact.getPassword());
                 campaignContact.setProgress(campaignMessage.getVerboiceMessageNumber());
                 contactService.saveContact(campaignContact);
             }

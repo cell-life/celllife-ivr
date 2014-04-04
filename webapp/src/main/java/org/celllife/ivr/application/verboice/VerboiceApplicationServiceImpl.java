@@ -61,12 +61,12 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     ProjectVariablesRepository projectVariablesRepository;
 
     @Override
-    public void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber) throws IvrException {
+    public void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws IvrException {
 
         String response = "";
 
         try {
-            response = verboiceService.enqueueCall(channelName, callFlowName, scheduleName, msisdn, messageNumber);
+            response = verboiceService.enqueueCallWithPassword(channelName, callFlowName, scheduleName, msisdn, messageNumber, password);
         } catch (Exception e) {
             throw new IvrException("Could not enqueue call to verboice. Reason: " + e.getMessage());
         }

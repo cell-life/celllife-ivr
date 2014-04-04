@@ -19,7 +19,7 @@ public class VerboiceApplicationServiceTest extends TestConfiguration {
     @Test
     public void testEnqueueCallForMsisdn() throws Exception{
 
-        verboiceApplicationService.enqueueCallForMsisdn("Skype Channel", "Call #1", "Test", "27721234567", 1);
+        verboiceApplicationService.enqueueCallForMsisdn("Skype Channel", "Call #1", "Test", "27721234567", 1, "1234");
 
     }
 

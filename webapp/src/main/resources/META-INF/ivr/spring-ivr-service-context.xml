@@ -10,10 +10,10 @@
 
     <util:properties id="quartzProperties" location="classpath:quartz.properties" />
     <!-- PROCESS CAMPAIGN FINISH -->
-    <bean name="processCampFinishJob" class="org.springframework.scheduling.quartz.JobDetailBean">
-        <!--<property name="volatility" value="true"/>
+    <!--<bean name="processCampFinishJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+        <property name="volatility" value="true"/>
         <property name="group" value="backgroundServices" />
-        <property name="name" value="processCampFinish" />-->
+        <property name="name" value="processCampFinish" />
         <property name="jobClass" value="org.celllife.ivr.application.jobs.BeanMethodInvokerJob" />
         <property name="jobDataAsMap">
             <map>
@@ -21,15 +21,7 @@
                 <entry key="methodName" value="processCampFinish" />
             </map>
         </property>
-    </bean>
-
-    <bean id="processCampFinishTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="volatility" value="true"/>
-        <property name="group" value="backgroundServices" />
-        <property name="jobDetail" ref="processCampFinishJob" />
-        <!-- run every day at 00:00 -->
-        <property name="cronExpression" value="0 0 0 * * ?" />
-    </bean>
+    </bean> -->
 
     <!-- DAILY / FLEXI CAMPAIGN JOB RUNNER -->
     <bean name="relativeCampaignJobRunner" class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -50,11 +42,11 @@
         <property name="applicationContextSchedulerContextKey" value="applicationContext" />
         <property name="quartzProperties" ref="quartzProperties" />
         <property name="taskExecutor" ref="quartzTaskExecutor" />
-        <property name="triggers">
+        <!--<property name="triggers">
             <list>
                 <ref bean="processCampFinishTrigger" />
             </list>
-        </property>
+        </property>-->
         <property name="jobDetails">
             <list>
                 <ref bean="relativeCampaignJobRunner" />
