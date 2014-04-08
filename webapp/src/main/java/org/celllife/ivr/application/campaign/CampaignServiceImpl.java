@@ -145,6 +145,11 @@ public class CampaignServiceImpl implements CampaignService{
         return quartzService.getScheduler();
     }
 
+    @Override
+    public void deleteTrigger(String triggerName, String groupName) throws SchedulerException {
+        quartzService.removeTrigger(triggerName, groupName);
+    }
+
     @Transactional("transactionManager")
     @Override
     public void deleteAllCampaigns() {

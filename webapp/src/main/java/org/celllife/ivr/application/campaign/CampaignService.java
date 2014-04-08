@@ -2,6 +2,7 @@ package org.celllife.ivr.application.campaign;
 
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 
 import java.util.Date;
 import java.util.List;
@@ -47,5 +48,7 @@ public interface CampaignService {
      * @return A list of campaigns.
      */
     List<Campaign> getAllCampaigns();
+
+    void deleteTrigger(String triggerName, String groupName) throws SchedulerException;
 
 }

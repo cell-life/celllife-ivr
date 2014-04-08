@@ -12,6 +12,7 @@ import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -80,9 +81,9 @@ public class RelativeCampaignJobTest extends TestConfiguration{
     @After
     public void tearDown() throws Exception {
 
-        List<Campaign> allCampaigns = campaignService.getAllCampaigns();
-        for (Campaign campaign : allCampaigns) {
-            campaignService.getScheduler().deleteJob("relativeCampaignJobRunner", "campaignJobs");
+        Trigger[] triggers = campaignService.getScheduler().getTriggersOfJob("relativeCampaignJobRunner", "campaignJobs");
+        for (Trigger trigger : triggers) {
+            campaignService.deleteTrigger(trigger.getName(),trigger.getGroup());
         }
         campaignService.deleteAllCampaigns();
 
