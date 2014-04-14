@@ -30,9 +30,9 @@ public class ContactsRepositoryTest extends TestConfiguration {
     @Test
     public void testAddNewContact() {
 
-        Contacts verboiceContact = new Contacts(7, new Date(), new Date());
+        //Contacts verboiceContact = new Contacts(7, new Date(), new Date());
 
-        verboiceContact = verboiceApplicationService.saveVerboiceContact(verboiceContact);
+        //verboiceContact = verboiceApplicationService.saveVerboiceContact(verboiceContact);
 
     }
 

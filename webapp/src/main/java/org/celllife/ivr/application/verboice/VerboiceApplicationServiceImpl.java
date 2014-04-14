@@ -43,7 +43,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     @Autowired
     CallLogRepository callLogRepository;
 
-    @Autowired
+    /*@Autowired
     ContactsRepository verboiceContactsRepository;
 
     @Autowired
@@ -53,7 +53,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     PersistedVariablesRepository persistedVariablesRepository;
 
     @Autowired
-    ProjectVariablesRepository projectVariablesRepository;
+    ProjectVariablesRepository projectVariablesRepository;*/
 
     @Override
     @Transactional("transactionManager")
@@ -86,7 +86,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
     }
 
-    @Override
+    /*@Override
     @Transactional("transactionManagerVerboice")
     public Contacts saveVerboiceContact(Contacts contact) {
         return verboiceContactsRepository.save(contact);
@@ -146,8 +146,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
         for (Contact contact : contacts) {
             log.debug("Attempting to save contact " + contact.getMsisdn() + " to Verboice. ");
             try {
-                Integer returnedId = createContactFromCelllifeContactAndSave(contact, campaign, projectVariablesList.get(0).getId());
-                /* TODO: use returnId somehow */
+                Integer returnedId = createContactFromCelllifeContactAndSave(contact, campaign, projectVariablesList.get(0).getId()); //TODO: use return result
             } catch (VerboiceDatabaseException e) {
                 log.warn("Contact not added to verboice. Reason: " + e.getLocalizedMessage());
                 failedNumbers.add(contact.getMsisdn());
@@ -156,6 +155,6 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         return failedNumbers;
 
-    }
+    }                         */
 
 }

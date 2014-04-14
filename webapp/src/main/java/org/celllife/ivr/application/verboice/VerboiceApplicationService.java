@@ -25,7 +25,7 @@ public interface VerboiceApplicationService {
      * @param verboiceContact Contact to save.
      * @return The newly created contact.
      */
-    Contacts saveVerboiceContact(Contacts verboiceContact);
+    //Contacts saveVerboiceContact(Contacts verboiceContact);
 
     /**
      * Creates Verboice contacts, based on Cell Life IVR contacts, and saves them.
@@ -34,6 +34,6 @@ public interface VerboiceApplicationService {
      * @return The msisdns of contacts that failed to be saved.
      * @throws IvrException
      */
-    List<String> createContactsAndSave(List<Contact> contacts, Long campaignId) throws IvrException;
+    //List<String> createContactsAndSave(List<Contact> contacts, Long campaignId) throws IvrException;
 
 }
