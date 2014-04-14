@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.Date;
 
@@ -22,7 +21,6 @@ import java.util.Date;
         "classpath:/META-INF/spring-data/spring-data-jpa-verboice.xml",
         "classpath:/META-INF/spring-integration/spring-integration-verboice.xml"
 })
-@TransactionConfiguration(transactionManager = "transactionManagerVerboice", defaultRollback = true)
 public class ContactsRepositoryTest extends TestConfiguration {
 
     @Autowired

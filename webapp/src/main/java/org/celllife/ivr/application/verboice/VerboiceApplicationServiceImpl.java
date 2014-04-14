@@ -1,13 +1,11 @@
 package org.celllife.ivr.application.verboice;
 
 import org.celllife.ivr.application.campaign.CampaignService;
-import org.celllife.ivr.application.contact.ContactService;
 import org.celllife.ivr.application.utils.JsonUtils;
 import org.celllife.ivr.domain.callog.CallLog;
 import org.celllife.ivr.domain.callog.CallLogRepository;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.contact.Contact;
-import org.celllife.ivr.domain.exception.ContactExistsException;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.exception.VerboiceDatabaseException;
 import org.celllife.ivr.domain.verboice.contactaddresses.ContactAddresses;
@@ -58,6 +56,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     ProjectVariablesRepository projectVariablesRepository;
 
     @Override
+    @Transactional("transactionManager")
     public void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password)  {
 
         String response = "";
