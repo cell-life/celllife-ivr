@@ -28,4 +28,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="campaign-3" author="dine@cell-life.org">
+        <comment>Removing 'type' and 'times_per_day' columns from Campaign table.</comment>
+        <dropColumn tableName="campaign" columnName="type" />
+        <dropColumn tableName="campaign" columnName="times_per_day" />
+    </changeSet>
+
 </databaseChangeLog>

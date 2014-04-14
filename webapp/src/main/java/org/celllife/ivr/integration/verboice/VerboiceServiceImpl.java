@@ -1,6 +1,7 @@
 package org.celllife.ivr.integration.verboice;
 
 import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class VerboiceServiceImpl implements VerboiceService {
     }
 
     @Override
-    public String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws Exception {
+    public String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws IvrException{
 
         String response = null;
         String url = verboiceBaseUrl;

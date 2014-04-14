@@ -88,12 +88,9 @@ public class QuartzServiceImpl implements QuartzService {
     }
 
     @Override
-    public void addTrigger(CronTriggerBean trigger) throws Exception {
-        try {
+    public void addTrigger(CronTriggerBean trigger) throws SchedulerException {
             scheduler.scheduleJob(trigger);
-        } catch (Exception e) {
-            throw new Exception("Error scheduling job. Cause: " + e.getMessage(), e);
-        }
+
     }
 
     @Override

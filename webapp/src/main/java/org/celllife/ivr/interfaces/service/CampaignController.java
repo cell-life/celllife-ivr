@@ -85,8 +85,6 @@ public class CampaignController {
             campaign.setDuration(campaignDto.getDuration());
         if (campaignDto.getName() != null)
             campaign.setName(campaignDto.getName());
-        if (campaignDto.getTimesPerDay() != null)
-            campaign.setTimesPerDay(campaignDto.getTimesPerDay());
 
         campaign = campaignService.saveCampaign(campaign);
 
@@ -127,35 +125,25 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/campaignMessages")
-    public ResponseEntity<String> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId) {
-
-        List<Integer> verboiceMessageNumbers = new ArrayList<>();
-
-        List<Date> messageTimesOfDay = new ArrayList<>();
+    public Collection<CampaignMessageDto> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId) throws IvrException {
 
         for(CampaignMessageDto campaignMessage : campaignMessages){
-
-            verboiceMessageNumbers.add(campaignMessage.getVerboiceMessageNumber());
-
             DateFormat formatter = new SimpleDateFormat("hh:mm");
             try {
                 Date date = (Date)formatter.parse(campaignMessage.getMessageTimeOfDay());
-                messageTimesOfDay.add(date);
             } catch (ParseException e) {
-                log.warn("An error occurred. Message times must be in the format hh:mm.", e);
-                return new ResponseEntity<String>("An error occurred. Message times must be in the format hh:mm.",HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new IvrException("An error occurred. Message times must be in the format hh:mm.");
             }
-
         }
 
-        try {
-            campaignService.setMessagesForCampaign(campaignId, verboiceMessageNumbers, messageTimesOfDay);
-        } catch (Exception e) {
-            log.warn("Error Adding Messages to Campaign. " + e.getMessage(), e);
-            return new ResponseEntity<String>("Error Adding Messages to Campaign. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        List<CampaignMessage> campaignMessagesReturned = campaignService.setMessagesForCampaign(campaignId,campaignMessages);
+        Collection<CampaignMessageDto> campaignMessageDtos = new ArrayList<>();
+
+        for (CampaignMessage campaignMessage : campaignMessagesReturned) {
+            campaignMessageDtos.add(campaignMessage.getCampaignMessageDto());
         }
 
-        return new ResponseEntity<String>("Successfully added messages.", HttpStatus.OK);
+        return campaignMessageDtos;
 
     }
 

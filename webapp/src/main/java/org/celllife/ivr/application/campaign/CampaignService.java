@@ -1,6 +1,9 @@
 package org.celllife.ivr.application.campaign;
 
 import org.celllife.ivr.domain.campaign.Campaign;
+import org.celllife.ivr.domain.exception.IvrException;
+import org.celllife.ivr.domain.message.CampaignMessage;
+import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
@@ -16,7 +19,7 @@ public interface CampaignService {
      * @param messageTimesOfDay A list of the message times.
      * @throws Exception
      */
-    void setMessagesForCampaign(Long campaignId, List<Integer> verboiceMessageNumbers, List<Date> messageTimesOfDay) throws Exception;
+    void setMessagesForDailyCampaign(Long campaignId, List<Integer> verboiceMessageNumbers, List<Date> messageTimesOfDay) throws Exception;
 
     /**
      * Get a campaign by id.
@@ -50,5 +53,8 @@ public interface CampaignService {
     List<Campaign> getAllCampaigns();
 
     void deleteTrigger(String triggerName, String groupName) throws SchedulerException;
+
+    List<CampaignMessage> setMessagesForCampaign(Long campaignId, List<CampaignMessageDto> campaignMessageDtos) throws IvrException;
+
 
 }

@@ -60,7 +60,7 @@ public class RelativeCampaignJobTest extends TestConfiguration{
         timesOfMessages.add(timeOfMessage);
         timesOfMessages.add(timeOfMessage);
         timesOfMessages.add(timeOfMessage);
-        campaignService.setMessagesForCampaign(campaign.getId(),verboiceMessageNumbers,timesOfMessages);
+        campaignService.setMessagesForDailyCampaign(campaign.getId(), verboiceMessageNumbers, timesOfMessages);
 
         Contact contact = new Contact("27724194158", "1234", campaign.getId(), 0);
         contact = contactService.saveContact(contact);

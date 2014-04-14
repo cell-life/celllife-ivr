@@ -7,6 +7,8 @@ import org.celllife.ivr.application.verboice.VerboiceApplicationService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignStatus;
 import org.celllife.ivr.domain.contact.Contact;
+import org.celllife.ivr.domain.exception.ContactExistsException;
+import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.message.CampaignMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,16 +42,7 @@ public class RelativeCampaignJob {
         Campaign campaign = campaignService.getCampaign(campaignId);
 
         try {
-            switch (campaign.getType()) {
-                case DAILY:
-                    processDailyCampaign(campaignId, msgSlot, msgTime);
-                    break;
-                case FLEXI:
-                    //processFlexiCampaign(campaign, msgTime);  FIXME: need to implement this
-                    break;
-                default:
-                    throw new Exception("Trying to run fixed campaign with relative campaign job");
-            }
+            processCampaignMessagesToSend(campaignId, msgSlot, msgTime);
         } catch (Exception e) {
             log.error("Error running relative campaign job. [campaign=" + campaignId + "]", e);
             if (campaign != null) {
@@ -59,33 +52,41 @@ public class RelativeCampaignJob {
         }
     }
 
-    private void processDailyCampaign(Long campaignId, Integer messageSlot, Date messageTime) throws Exception {
+    private void processCampaignMessagesToSend(Long campaignId, Integer messageSlot, Date messageTime) {
 
         Campaign campaign = campaignService.getCampaign(campaignId);
 
         List<CampaignMessage> campaignMessages = campaignMessageService.findMessagesForTimeSlot(campaignId, messageTime, messageSlot);
         List<Contact> campaignContacts = contactService.findNonVoidedContactsInCampaign(campaignId);
 
+        log.info("sending messages for relative campaign: [id={}], [msgSlot={}], [msgTime={}]]",
+                new Object[]{campaignId, messageSlot, messageTime});
+
         for (Contact campaignContact : campaignContacts) {
 
             CampaignMessage campaignMessage = getMessageForContact(campaignContact, campaignMessages);
 
             if (campaignMessage != null) {
+
                 verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignMessage.getVerboiceMessageNumber(), campaignContact.getPassword());
                 campaignContact.setProgress(campaignMessage.getVerboiceMessageNumber());
-                contactService.saveContact(campaignContact);
+
+                try {
+                    contactService.saveContact(campaignContact);
+                } catch (ContactExistsException e) {
+                    log.warn("Error saving contact with id " + campaignContact.getId() + " Reason: " + e.getMessage());
+                }
             }
+
 
         }
 
-        log.info("sending messages for relative campaign: [id={}], [msgSlot={}], [msgTime={}]]",
-                new Object[]{campaignId, messageSlot, messageTime});
     }
 
     protected CampaignMessage getMessageForContact(Contact campaignContact, List<CampaignMessage> campaignMessages) {
 
         for (CampaignMessage campaignMessage : campaignMessages) {
-            if ((campaignContact.getProgress()+1) ==  campaignMessage.getMessageDay()) {
+            if ((campaignContact.getProgress() + 1) ==  campaignMessage.getSequenceNumber()) {
                 return campaignMessage;
             }
         }

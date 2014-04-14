@@ -16,4 +16,10 @@
 		</createTable>
 	</changeSet>
 
+    <changeSet id="campaign-message=2" author="dine@cell-life.org">
+        <addColumn tableName="campaign_message">
+            <column name="sequence_number" type="INT" defaultValue="1" />
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

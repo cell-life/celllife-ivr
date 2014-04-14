@@ -10,6 +10,8 @@ public class CampaignMessageDto implements Serializable {
 
     String messageTimeOfDay;
 
+    Integer messageDay;
+
     public Integer getVerboiceMessageNumber() {
         return verboiceMessageNumber;
     }
@@ -24,6 +26,14 @@ public class CampaignMessageDto implements Serializable {
 
     public void setMessageTimeOfDay(String messageTimeOfDay) {
         this.messageTimeOfDay = messageTimeOfDay;
+    }
+
+    public Integer getMessageDay() {
+        return messageDay;
+    }
+
+    public void setMessageDay(Integer messageDay) {
+        this.messageDay = messageDay;
     }
 
 }

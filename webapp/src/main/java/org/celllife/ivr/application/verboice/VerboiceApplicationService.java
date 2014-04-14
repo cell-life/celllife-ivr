@@ -18,7 +18,7 @@ public interface VerboiceApplicationService {
      * @param messageNumber Message number to use, in the Verboice call flow on the Verboice server.
      * @throws IvrException
      */
-    void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws IvrException;
+    void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password);
 
     /**
      * Saves a contact to the repository.

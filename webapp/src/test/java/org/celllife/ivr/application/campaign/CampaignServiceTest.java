@@ -1,4 +1,4 @@
-package org.celllife.ivr.application;
+package org.celllife.ivr.application.campaign;
 
 import junit.framework.Assert;
 import org.celllife.ivr.application.campaign.CampaignService;
@@ -51,7 +51,7 @@ public class CampaignServiceTest extends TestConfiguration {
         timesOfMessages.add(timeOfMessage);
         timesOfMessages.add(timeOfMessage);
 
-        campaignService.setMessagesForCampaign(campaign.getId(),verboiceMessageNumbers,timesOfMessages);
+        campaignService.setMessagesForDailyCampaign(campaign.getId(), verboiceMessageNumbers, timesOfMessages);
 
         Trigger[] triggers = campaignService.getScheduler().getTriggersOfJob("relativeCampaignJobRunner", "campaignJobs");
         Assert.assertEquals(1,triggers.length);

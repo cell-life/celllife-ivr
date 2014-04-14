@@ -41,31 +41,36 @@ public class CampaignMessage implements Serializable {
     @Basic(optional=false)
     private Long campaignId;
 
+    private int sequenceNumber;
+
 	public CampaignMessage() {
 	}
 
-	public CampaignMessage(int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime, Long campaignId) {
+	public CampaignMessage(int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime, Long campaignId, int campaignSequenceNumber) {
 		this.verboiceMessageNumber = verboiceMessageNumber;
 		this.messageDay = msgDay;
 		this.messageTime = messageTime;
 		this.messageSlot = msgSlot;
         this.campaignId = campaignId;
+        this.sequenceNumber = campaignSequenceNumber;
 	}
 
-    public CampaignMessage(Long id, int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime, Long campaignId) {
+    public CampaignMessage(Long id, int verboiceMessageNumber, int msgDay, int msgSlot, Date messageTime, Long campaignId, int campaignSequenceNumber) {
         setId(id);
         this.verboiceMessageNumber = verboiceMessageNumber;
         this.messageDay = msgDay;
         this.messageTime = messageTime;
         this.messageSlot = msgSlot;
         this.campaignId = campaignId;
+        this.sequenceNumber = campaignSequenceNumber;
     }
 
     public CampaignMessageDto getCampaignMessageDto() {
         CampaignMessageDto campaignMessageDto = new CampaignMessageDto();
         DateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        campaignMessageDto.setMessageTimeOfDay(dateFormat.format(this.messageTime));
-        campaignMessageDto.setVerboiceMessageNumber(this.verboiceMessageNumber);
+        campaignMessageDto.setMessageTimeOfDay(dateFormat.format(this.getMessageTime()));
+        campaignMessageDto.setVerboiceMessageNumber(this.getVerboiceMessageNumber());
+        campaignMessageDto.setMessageDay(this.getMessageDay());
         return campaignMessageDto;
     }
 
@@ -123,6 +128,14 @@ public class CampaignMessage implements Serializable {
 
     public void setMessageTime(Date msgDateTime) {
         this.messageTime = msgDateTime;
+    }
+
+    public int getSequenceNumber() {
+        return sequenceNumber;
+    }
+
+    public void setSequenceNumber(int campaignSequenceNumber) {
+        this.sequenceNumber = campaignSequenceNumber;
     }
 
     @Override

@@ -30,18 +30,12 @@ public class Campaign implements Serializable {
 	private String description = "";
 
     @Basic(optional=false)
-    private int timesPerDay = 0;
-
-    @Basic(optional=false)
     private int duration = 0;
 
 	private Date endDate;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
-
-    @Enumerated(EnumType.STRING)
-    private CampaignType type;
 
     @Enumerated(EnumType.STRING)
     private CampaignStatus status;
@@ -65,9 +59,7 @@ public class Campaign implements Serializable {
     public Campaign(Long id, String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName, Long verboiceProjectId) {
         this.id = id;
         this.name = name;
-        this.type = type;
         this.description = description;
-        this.timesPerDay = timesPerDay;
         this.duration = duration;
         this.callFlowName = callFlowName;
         this.channelName = channelName;
@@ -77,9 +69,7 @@ public class Campaign implements Serializable {
 
     public Campaign(String name, CampaignType type, String description, int timesPerDay, int duration, String callFlowName, String channelName, String scheduleName, Long verboiceProjectId) {
         this.name = name;
-        this.type = type;
         this.description = description;
-        this.timesPerDay = timesPerDay;
         this.duration = duration;
         this.callFlowName = callFlowName;
         this.channelName = channelName;
@@ -94,14 +84,6 @@ public class Campaign implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public CampaignType getType() {
-		return type;
-	}
-
-	public void setType(CampaignType type) {
-		this.type = type;
-	}
 
 	public CampaignStatus getStatus() {
 		return status;
@@ -133,14 +115,6 @@ public class Campaign implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public int getTimesPerDay() {
-		return timesPerDay;
-	}
-
-	public void setTimesPerDay(int timesPerDay) {
-		this.timesPerDay = timesPerDay;
 	}
 
 	public int getDuration() {
@@ -213,7 +187,6 @@ public class Campaign implements Serializable {
         campaignDto.setName(this.getName());
         campaignDto.setDescription(this.getDescription());
         campaignDto.setDuration(this.getDuration());
-        campaignDto.setTimesPerDay(this.getTimesPerDay());
         campaignDto.setCallFlowName(this.getCallFlowName());
         campaignDto.setChannelName(this.getChannelName());
         campaignDto.setScheduleName(this.getScheduleName());

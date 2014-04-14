@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +31,16 @@ public final class VerboiceClient {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public String get(String url) throws Exception {
+    public String get(String url) throws IvrException {
 
         HttpGet method = newHttpGetMethod(url);
 
         HttpResponse response = execute(method);
         if (response == null) {
-            throw new Exception("No response from server at " + url);
+            throw new IvrException("No response from server at " + url);
         }
         if (response.getStatusLine().getStatusCode() != 200) {
-            throw new Exception(response.getStatusLine().toString());
+            throw new IvrException(response.getStatusLine().toString());
         }
 
         HttpEntity responseEntity = response.getEntity();

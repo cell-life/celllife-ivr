@@ -28,7 +28,7 @@ public interface QuartzService {
      * @param trigger Trigger to add.
      * @throws Exception
      */
-    void addTrigger(CronTriggerBean trigger) throws Exception;
+    void addTrigger(CronTriggerBean trigger) throws SchedulerException;
 
     /**
      * Removes a quartz trigger.
