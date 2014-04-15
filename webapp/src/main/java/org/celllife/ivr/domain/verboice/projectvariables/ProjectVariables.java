@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Cacheable
 public class ProjectVariables implements Serializable {
 
     private static final long serialVersionUID = 7953510579798240810L;

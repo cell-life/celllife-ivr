@@ -9,7 +9,6 @@ import java.util.Date;
  */
 
 @Entity
-@Cacheable
 public class CallLog implements Serializable {
 
     private static final long serialVersionUID = -6311433560024750172L;

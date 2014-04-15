@@ -9,7 +9,6 @@ import javax.persistence.QueryHint;
 
 public interface ProjectVariablesRepository extends PagingAndSortingRepository<ProjectVariables,Integer> {
 
-    @QueryHints({@QueryHint(name = "org.hibernate.cacheable", value = "true")})
     Iterable<ProjectVariables> findByName(String name);
 
     @Query("select new org.celllife.ivr.domain.verboice.projectvariables.ProjectVariables(p.id, p.projectId, p.name, p.createdAt, p.updatedAt)  " +

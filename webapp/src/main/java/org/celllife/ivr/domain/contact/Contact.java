@@ -9,7 +9,6 @@ import java.io.Serializable;
 /* This entity is for storing a contact with a unique msisdn (cell phone number) */
 
 @Entity
-@Cacheable
 public class Contact implements Serializable {
 
     private static final long serialVersionUID = -6710129478435404575L;

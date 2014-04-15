@@ -14,7 +14,6 @@ public class RelativeCampaignJobRunner extends QuartzJobBean {
 	public static final String PROP_MSGTIME = "msgTime";
 
 	private Long campaignId;
-	private Long userId;
 	private Integer msgSlot;
 	private Date msgTime;
 	private ApplicationContext applicationContext;
@@ -27,10 +26,6 @@ public class RelativeCampaignJobRunner extends QuartzJobBean {
 	
 	public void setCampaignId(Long campaignId) {
 		this.campaignId = campaignId;
-	}
-	
-	public void setUserId(Long userId) {
-		this.userId = userId;
 	}
 	
 	public void setApplicationContext(ApplicationContext applicationContext) {

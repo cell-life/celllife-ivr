@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
-@Cacheable
 public class CampaignMessage implements Serializable {
 
     private static final long serialVersionUID = -6551411740591583081L;

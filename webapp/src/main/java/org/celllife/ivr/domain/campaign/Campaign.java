@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Cacheable
 public class Campaign implements Serializable {
 
     private static final long serialVersionUID = 3718726486523331541L;

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-@Cacheable
 public class Contacts implements Serializable {
 
     private static final long serialVersionUID = 6254955305043914773L;

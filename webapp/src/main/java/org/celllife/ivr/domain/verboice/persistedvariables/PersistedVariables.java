@@ -4,7 +4,6 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Cacheable
 public class PersistedVariables {
 
     @Id
