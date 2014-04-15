@@ -125,7 +125,7 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/campaignMessages")
-    public Collection<CampaignMessageDto> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId) throws IvrException {
+    public Collection<CampaignMessageDto> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId, HttpServletResponse response) throws IvrException {
 
         for(CampaignMessageDto campaignMessage : campaignMessages){
             DateFormat formatter = new SimpleDateFormat("hh:mm");
@@ -142,6 +142,8 @@ public class CampaignController {
         for (CampaignMessage campaignMessage : campaignMessagesReturned) {
             campaignMessageDtos.add(campaignMessage.getCampaignMessageDto());
         }
+
+        response.setStatus(HttpServletResponse.SC_CREATED);
 
         return campaignMessageDtos;
 

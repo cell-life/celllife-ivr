@@ -70,12 +70,6 @@ public class CsvUploadController {
             }
         }
 
-        /*List<String> failedNumbers = verboiceApplicationService.createContactsAndSave(contactList, campaignId);
-        for (String number : failedNumbers) {
-            failedContactDtos.add(new FailedContactDto(number));
-            contactList.remove(findIndexOfContactWithMsisdn(contactList, number));
-        } */
-
         List<String> locallyFailedNumbers = contactService.saveContacts(contactList);
         for (String number : locallyFailedNumbers) {
             log.warn("The number " + number + " could not be added to the local database.");
@@ -97,17 +91,4 @@ public class CsvUploadController {
         return processors;
     }
 
-    /*private int findIndexOfContactWithMsisdn(List<Contact> contactList, String value) {
-
-        int counter = 0;
-
-        for(Contact contact: contactList) {
-            if(contact.getMsisdn().trim().contains(value))
-                return counter;
-            counter = counter + 1;
-        }
-
-        return -1;
-
-    }*/
 }
