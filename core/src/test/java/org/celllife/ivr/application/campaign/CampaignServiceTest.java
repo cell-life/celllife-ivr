@@ -6,6 +6,7 @@ import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignType;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
@@ -24,6 +25,13 @@ public class CampaignServiceTest extends TestConfiguration {
 
     @Autowired
     CampaignService campaignService;
+
+    @Before
+    public void setUp() throws Exception {
+
+        campaignService.deleteAllCampaigns();
+
+    }
 
     @Test
     public void testAddMessagesToCampaign() throws Exception {

@@ -47,6 +47,7 @@ public class ContactServiceTest extends TestConfiguration {
         List<Contact> contactList = new ArrayList<Contact>();
         contactList.add(new Contact("27724194158","1234", 1L, 0));
         contactService.saveContacts(contactList);
+        campaignService.deleteAllCampaigns();
     }
 
     @Test
