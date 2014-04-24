@@ -1,9 +1,6 @@
 package org.celllife.ivr.application.verboice;
 
-import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.exception.IvrException;
-
-import java.util.List;
 
 public interface VerboiceApplicationService {
 
@@ -18,21 +15,5 @@ public interface VerboiceApplicationService {
      * @throws IvrException
      */
     void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password);
-
-    /**
-     * Saves a contact to the repository.
-     * @param verboiceContact Contact to save.
-     * @return The newly created contact.
-     */
-    //Contacts saveVerboiceContact(Contacts verboiceContact);
-
-    /**
-     * Creates Verboice contacts, based on Cell Life IVR contacts, and saves them.
-     * @param contacts The Cell Life contacts to convert.
-     * @param campaignId The campaign in question.
-     * @return The msisdns of contacts that failed to be saved.
-     * @throws IvrException
-     */
-    //List<String> createContactsAndSave(List<Contact> contacts, Long campaignId) throws IvrException;
 
 }

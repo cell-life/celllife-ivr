@@ -1,6 +1,5 @@
 package org.celllife.ivr.integration.verboice;
 
-import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,15 +21,6 @@ public class VerboiceServiceImpl implements VerboiceService {
     @Value("${verboice.base_url}")
     private String verboiceBaseUrl;
 
-    /**
-     * Enqueues call to Verboice
-     * @param channelName
-     * @param callFlowName
-     * @param scheduleName
-     * @param msisdn
-     * @return string of format {"call_id":58,"state":"queued"}
-     * @throws Exception
-     */
     @Override
     public String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber) throws Exception {
 

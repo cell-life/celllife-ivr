@@ -58,6 +58,12 @@ public interface ContactService {
      */
     public boolean msisdnExists(String msisdn);
 
+    /**
+     * Checks whether a contact with a particular msisdn exists in a particular campaign.
+     * @param msisdn The msisdn concerned.
+     * @param campaignId The id of the campaign.
+     * @return True of the contact exists and false if it doesn't.
+     */
     public boolean contactExists(String msisdn, Long campaignId);
 
 }

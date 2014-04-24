@@ -5,7 +5,6 @@ import org.celllife.ivr.application.jobs.RelativeCampaignJobRunner;
 import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignRepository;
-import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.exception.CampaignNameExistsException;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.message.CampaignMessage;
@@ -29,7 +28,7 @@ import java.util.*;
 
 @Service
 @Transactional("transactionManager")
-public class CampaignServiceImpl implements CampaignService{
+public class CampaignServiceImpl implements CampaignService {
 
     private static Logger log = LoggerFactory.getLogger(CampaignServiceImpl.class);
 
@@ -53,15 +52,15 @@ public class CampaignServiceImpl implements CampaignService{
 
         int messageCounter = 0;
         for (int i = 0; i < campaign.getDuration(); i++) {
-                int msgSlot =  1;
-                int msgDay = i + 1;
-                CampaignMessage newCampaignMessage = new CampaignMessage(verboiceMessageNumbers.get(messageCounter), msgDay, msgSlot, messageTimesOfDay.get(0),campaignId, msgDay);
-                campaignMessages.add(newCampaignMessage);
-                campaignMessageService.save(newCampaignMessage);
-                messageCounter++;
+            int msgSlot = 1;
+            int msgDay = i + 1;
+            CampaignMessage newCampaignMessage = new CampaignMessage(verboiceMessageNumbers.get(messageCounter), msgDay, msgSlot, messageTimesOfDay.get(0), campaignId, msgDay);
+            campaignMessages.add(newCampaignMessage);
+            campaignMessageService.save(newCampaignMessage);
+            messageCounter++;
         }
 
-        createTriggersForMessages(campaignMessages,campaign);
+        createTriggersForMessages(campaignMessages, campaign);
 
         for (CampaignMessage campaignMessage : oldCampaignMessages) {
             campaignMessageService.deleteMessage(campaignMessage.getId());
@@ -118,7 +117,7 @@ public class CampaignServiceImpl implements CampaignService{
             List<CampaignMessageDto> campaignMessageDtosForDay = findAndSortCampaignMessagesForDay(msgDay, campaignMessageDtos);
 
             for (int j = 0; j < campaignMessageDtosForDay.size(); j++) {
-                sequenceNumber = sequenceNumber+1;
+                sequenceNumber = sequenceNumber + 1;
                 int msgSlot = j + 1;
                 CampaignMessage newCampaignMessage = null;
                 try {
@@ -132,7 +131,7 @@ public class CampaignServiceImpl implements CampaignService{
 
         }
 
-        createTriggersForMessages(campaignMessages,campaign);
+        createTriggersForMessages(campaignMessages, campaign);
 
         for (CampaignMessage campaignMessage : oldCampaignMessages) {
             campaignMessageService.deleteMessage(campaignMessage.getId());
@@ -175,7 +174,7 @@ public class CampaignServiceImpl implements CampaignService{
     protected Date convertStringToHoursMinutes(String messageTime) throws ParseException {
 
         DateFormat formatter = new SimpleDateFormat("hh:mm");
-        return  ((Date)formatter.parse(messageTime));
+        return ((Date) formatter.parse(messageTime));
 
     }
 
@@ -219,11 +218,9 @@ public class CampaignServiceImpl implements CampaignService{
         if (campaign.getId() == null) {
             if (campaignNameExists(campaign.getName())) {
                 throw new CampaignNameExistsException("Cannot save campaign. A campaign with the name " + campaign.getName() + " already exists.");
-            }
-            else
+            } else
                 return campaignRepository.save(campaign);
-        }
-        else
+        } else
             return campaignRepository.save(campaign);
     }
 
@@ -258,7 +255,7 @@ public class CampaignServiceImpl implements CampaignService{
     @Transactional(readOnly = true)
     @Override
     public List<Campaign> findCampaignByName(String name) {
-        return  IteratorUtils.toList(campaignRepository.findByName(name).iterator());
+        return IteratorUtils.toList(campaignRepository.findByName(name).iterator());
     }
 
     @Transactional(readOnly = true)

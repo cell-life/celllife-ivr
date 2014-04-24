@@ -53,10 +53,28 @@ public interface CampaignService {
      */
     List<Campaign> getAllCampaigns();
 
+    /**
+     * Deletes a quartz scheduler trigger by name and group.
+     * @param triggerName The trigger name.
+     * @param groupName The group name.
+     * @throws SchedulerException
+     */
     void deleteTrigger(String triggerName, String groupName) throws SchedulerException;
 
+    /**
+     * Sets the messages for a particular campaign. NB: Overrides any previous messages that were set.
+     * @param campaignId
+     * @param campaignMessageDtos
+     * @return The list of messages, as set in the campaign.
+     * @throws IvrException
+     */
     List<CampaignMessage> setMessagesForCampaign(Long campaignId, List<CampaignMessageDto> campaignMessageDtos) throws IvrException;
 
+    /**
+     * Returns all campaigns with a particular name.
+     * @param name The campaign name.
+     * @return A list of campaigns.
+     */
     public List<Campaign> findCampaignByName(String name);
 
 

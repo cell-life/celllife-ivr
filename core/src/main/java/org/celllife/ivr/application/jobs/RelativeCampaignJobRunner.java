@@ -1,6 +1,5 @@
 package org.celllife.ivr.application.jobs;
 
-import org.celllife.ivr.domain.exception.CampaignNameExistsException;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;

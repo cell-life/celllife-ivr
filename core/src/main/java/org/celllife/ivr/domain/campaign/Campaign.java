@@ -1,7 +1,5 @@
 package org.celllife.ivr.domain.campaign;
 
-import org.celllife.ivr.domain.contact.Contact;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;

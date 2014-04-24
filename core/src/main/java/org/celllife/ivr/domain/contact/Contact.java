@@ -1,6 +1,5 @@
 package org.celllife.ivr.domain.contact;
 
-import org.celllife.ivr.domain.campaign.CampaignDto;
 import org.celllife.ivr.domain.exception.InvalidMsisdnException;
 
 import javax.persistence.*;
