@@ -8,6 +8,7 @@ import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignType;
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.message.CampaignMessage;
+import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class RelativeCampaignJobTest extends TestConfiguration{
     CampaignMessageService campaignMessageService;
 
     @Test
-    public void testGetMessageForContact() throws Exception {
+    public void testGetMessageForContactInDailyCampaign() throws Exception {
 
         // Create and save campaign
         Campaign campaign = new Campaign("test", "test campaign", 3, "","","",1L);
@@ -64,6 +65,58 @@ public class RelativeCampaignJobTest extends TestConfiguration{
 
         Contact contact = new Contact("27724194158", "1234", campaign.getId(), 0);
         contact = contactService.saveContact(contact);
+        CampaignMessage campaignMessages = relativeCampaignJob.getMessageForContact(contact,campaignMessageService.findMessagesInCampaign(campaign.getId()));
+        Assert.assertEquals(campaignMessages.getVerboiceMessageNumber(), 1);
+
+        contact.setProgress(1);
+        contact = contactService.saveContact(contact);
+        campaignMessages = relativeCampaignJob.getMessageForContact(contact,campaignMessageService.findMessagesInCampaign(campaign.getId()));
+        Assert.assertEquals(campaignMessages.getVerboiceMessageNumber(), 2);
+
+        contact.setProgress(2);
+        contact = contactService.saveContact(contact);
+        campaignMessages = relativeCampaignJob.getMessageForContact(contact,campaignMessageService.findMessagesInCampaign(campaign.getId()));
+        Assert.assertEquals(campaignMessages.getVerboiceMessageNumber(), 3);
+    }
+
+    @Test
+    public void testGetMessageForContact() throws Exception {
+
+        // Create and save campaign
+        Campaign campaign = new Campaign("test 2", "test campaign 2", 3, "","","",1L);
+        campaign = campaignService.saveCampaign(campaign);
+
+        // Create and save messages
+        List<Integer> verboiceMessageNumbers = new ArrayList<>();
+        verboiceMessageNumbers.add(1);
+        verboiceMessageNumbers.add(2);
+        verboiceMessageNumbers.add(3);
+
+        List<CampaignMessageDto> campaignMessageDtos = new ArrayList<>();
+
+        CampaignMessageDto campaignMessageDto = new CampaignMessageDto();
+        campaignMessageDto.setMessageDay(1);
+        campaignMessageDto.setVerboiceMessageNumber(1);
+        campaignMessageDto.setMessageTimeOfDay("9:00");
+        campaignMessageDtos.add(campaignMessageDto);
+
+        campaignMessageDto = new CampaignMessageDto();
+        campaignMessageDto.setMessageDay(1);
+        campaignMessageDto.setVerboiceMessageNumber(2);
+        campaignMessageDto.setMessageTimeOfDay("14:00");
+        campaignMessageDtos.add(campaignMessageDto);
+
+        campaignMessageDto = new CampaignMessageDto();
+        campaignMessageDto.setMessageDay(2);
+        campaignMessageDto.setVerboiceMessageNumber(3);
+        campaignMessageDto.setMessageTimeOfDay("9:30");
+        campaignMessageDtos.add(campaignMessageDto);
+
+        campaignService.setMessagesForCampaign(campaign.getId(),campaignMessageDtos);
+
+        Contact contact = new Contact("27724194159", "1234", campaign.getId(), 0);
+        contact = contactService.saveContact(contact);
+
         CampaignMessage campaignMessages = relativeCampaignJob.getMessageForContact(contact,campaignMessageService.findMessagesInCampaign(campaign.getId()));
         Assert.assertEquals(campaignMessages.getVerboiceMessageNumber(), 1);
 

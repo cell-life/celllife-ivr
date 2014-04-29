@@ -50,7 +50,7 @@ public class CallLog implements Serializable {
 
     }
 
-    public CallLog(Long id, Date date, Long verboiceId, String msisdn, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
         this.id = id;
         this.date = date;
         this.verboiceId = verboiceId;
@@ -62,7 +62,7 @@ public class CallLog implements Serializable {
         this.state = state;
     }
 
-    public CallLog(Date date, Long verboiceId, String msisdn, int progress, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password) {
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
@@ -71,6 +71,7 @@ public class CallLog implements Serializable {
         this.callFlowName = callFlowName;
         this.scheduleName = scheduleName;
         this.state = state;
+        this.password = password;
     }
 
     public Date getDate() {

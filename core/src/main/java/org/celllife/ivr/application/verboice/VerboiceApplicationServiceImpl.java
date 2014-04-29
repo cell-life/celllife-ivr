@@ -53,11 +53,11 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         if (responseVariables.containsKey("call_id")) {
             callLogRepository.save(new CallLog(new Date(), Long.parseLong(responseVariables.get("call_id")), msisdn,
-                    0, channelName, callFlowName, scheduleName, responseVariables.get("state"), messageNumber));
+                    channelName, callFlowName, scheduleName, responseVariables.get("state"), messageNumber, password));
         } else {
             log.warn("No call ID returned from Verboice server.");
             callLogRepository.save(new CallLog(new Date(), null, msisdn,
-                    0, channelName, callFlowName, scheduleName, "ERROR", messageNumber));
+                   channelName, callFlowName, scheduleName, "ERROR", messageNumber, password));
         }
 
     }
