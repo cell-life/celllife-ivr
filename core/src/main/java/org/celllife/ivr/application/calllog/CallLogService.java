@@ -8,7 +8,7 @@ public interface CallLogService {
 
     CallLog saveCallLog(CallLog callLog);
 
-   CallLog findCallLogByVerboiceId(Long verboiceId);
+    CallLog findCallLogByVerboiceId(Long verboiceId);
 
     CallLog findCallLogByVerboiceIdAndMsisdnAndMessageNumber(Integer verboiceProjectId, String msisdn, Integer messageNumber);
 
