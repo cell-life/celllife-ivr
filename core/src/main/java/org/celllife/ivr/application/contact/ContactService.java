@@ -11,9 +11,9 @@ public interface ContactService {
      * Gets all contacts in the system.
      * @return A list of contacts.
      */
-    public List<Contact> getAllContacts();
+    List<Contact> getAllContacts();
 
-    public Contact getContactById(Long id);
+    Contact getContactById(Long id);
 
     /**
      * Saves a contact.
@@ -21,42 +21,44 @@ public interface ContactService {
      * @return The updated contact.
      * @throws ContactExistsException
      */
-    public Contact saveContact(Contact contact) throws ContactExistsException;
+    Contact saveContact(Contact contact) throws ContactExistsException;
 
     /**
      * Delete all contacts.
      */
-    public void deleteAll();
+    void deleteAll();
 
     /**
      * Save contacts.
      * @param contacts Contacts to save.
      * @return List of msisdns of contacts that failed to save.
      */
-    public List<String> saveContacts(List<Contact> contacts);
+    List<String> saveContacts(List<Contact> contacts);
 
     /**
      * Find contacts in a particular campaign.
      * @param campaignId The ID of the campaign to find contacts for.
      * @return List of contacts.
      */
-    public List<Contact> findContactsInCampaign(Long campaignId);
+    List<Contact> findContactsInCampaign(Long campaignId);
 
-    public List<Contact> findNonVoidedContactsInCampaign(Long campaignId);
+    List<Contact> findNonVoidedContactsInCampaign(Long campaignId);
 
     /**
      * Find contacts by msisdn.
      * @param msisdn The msisdn to find contacts for.
      * @return List of contacts.
      */
-    public List<Contact> findContactByMsisdn(String msisdn);
+    List<Contact> findContactByMsisdn(String msisdn);
+
+    Contact findContactByMsisdnAndCampaign(String msisdn, Long campaignId);
 
     /**
      * Check whether a contact with said msisdn exists.
      * @param msisdn The msisdn to check.
      * @return True if it exists, false if it doesn't exist.
      */
-    public boolean msisdnExists(String msisdn);
+    boolean msisdnExists(String msisdn);
 
     /**
      * Checks whether a contact with a particular msisdn exists in a particular campaign.
@@ -64,6 +66,6 @@ public interface ContactService {
      * @param campaignId The id of the campaign.
      * @return True of the contact exists and false if it doesn't.
      */
-    public boolean contactExists(String msisdn, Long campaignId);
+    boolean contactExists(String msisdn, Long campaignId);
 
 }

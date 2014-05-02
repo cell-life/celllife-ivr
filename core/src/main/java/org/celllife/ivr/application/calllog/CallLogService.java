@@ -10,4 +10,6 @@ public interface CallLogService {
 
    CallLog findCallLogByVerboiceId(Long verboiceId);
 
+    CallLog findCallLogByVerboiceIdAndMsisdnAndMessageNumber(Integer verboiceProjectId, String msisdn, Integer messageNumber);
+
 }

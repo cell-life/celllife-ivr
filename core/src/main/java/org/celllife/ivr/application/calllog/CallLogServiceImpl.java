@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional("transactionManager")
-public class CallLogServiceImpl implements CallLogService{
+public class CallLogServiceImpl implements CallLogService {
 
     private static Logger log = LoggerFactory.getLogger(CallLogServiceImpl.class);
 
@@ -19,6 +21,7 @@ public class CallLogServiceImpl implements CallLogService{
     CallLogRepository callLogRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public CallLog getCallLog(Long id) {
         return callLogRepository.findOne(id);
     }
@@ -36,5 +39,14 @@ public class CallLogServiceImpl implements CallLogService{
         return callLogRepository.findByVerboiceId(verboiceId).iterator().next();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public CallLog findCallLogByVerboiceIdAndMsisdnAndMessageNumber(Integer verboiceProjectId, String msisdn, Integer messageNumber) {
+        List<CallLog> callLogList = IteratorUtils.toList(callLogRepository.findByVerboiceProjectIdAndMsisdnAndMessageNumberOrderByDateDesc(verboiceProjectId, msisdn, messageNumber).iterator());
+        if (callLogList.size() > 0)
+            return callLogList.get(0); // this will return the latest one
+        else
+            return null;
+    }
 
 }

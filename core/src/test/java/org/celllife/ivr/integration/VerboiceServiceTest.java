@@ -1,7 +1,6 @@
 package org.celllife.ivr.integration;
 
 import org.celllife.ivr.integration.verboice.VerboiceService;
-import org.celllife.ivr.integration.verboice.VerboiceServiceImpl;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;

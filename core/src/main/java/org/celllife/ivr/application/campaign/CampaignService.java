@@ -75,7 +75,7 @@ public interface CampaignService {
      * @param name The campaign name.
      * @return A list of campaigns.
      */
-    public List<Campaign> findCampaignByName(String name);
+    List<Campaign> findCampaignByName(String name);
 
 
 }

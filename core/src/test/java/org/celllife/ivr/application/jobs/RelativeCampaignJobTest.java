@@ -11,6 +11,7 @@ import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
@@ -38,6 +39,13 @@ public class RelativeCampaignJobTest extends TestConfiguration{
 
     @Autowired
     CampaignMessageService campaignMessageService;
+
+    @Before
+    public void setUp() throws Exception {
+
+        campaignService.deleteAllCampaigns();
+
+    }
 
     @Test
     public void testGetMessageForContactInDailyCampaign() throws Exception {

@@ -1,5 +1,6 @@
 package org.celllife.ivr.integration.verboice;
 
+import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.exception.IvrException;
 
 public interface VerboiceService {
@@ -28,5 +29,7 @@ public interface VerboiceService {
      * @throws IvrException
      */
     String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws IvrException;
+
+    void getUpdatedContactDetails(String msisdn, Campaign campaign) throws IvrException;
 
 }

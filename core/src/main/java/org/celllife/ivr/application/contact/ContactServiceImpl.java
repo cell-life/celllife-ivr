@@ -86,6 +86,17 @@ public class ContactServiceImpl implements ContactService {
         return IteratorUtils.toList(contactRepository.findContactByMsisdn(msisdn).iterator());
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Contact findContactByMsisdnAndCampaign(String msisdn, Long campaignId) {
+        List<Contact> contacts = IteratorUtils.toList(contactRepository.findContactByMsisdnAndCampaign(msisdn,campaignId).iterator());
+        if (contacts.size() != 1) {
+            return null;
+        } else {
+            return contacts.get(0);
+        }
+    }
+
     @Override
     public boolean msisdnExists(String msisdn) {
         if (findContactByMsisdn(msisdn).size() >= 1) {

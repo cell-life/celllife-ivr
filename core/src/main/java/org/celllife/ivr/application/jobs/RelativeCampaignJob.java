@@ -62,7 +62,7 @@ public class RelativeCampaignJob {
 
             if (campaignMessage != null) {
 
-                verboiceApplicationService.enqueueCallForMsisdn(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), campaignContact.getMsisdn(), campaignMessage.getVerboiceMessageNumber(), campaignContact.getPassword());
+                verboiceApplicationService.enqueueCallForMsisdn(campaign, campaignContact.getMsisdn(), campaignMessage.getVerboiceMessageNumber(), campaignContact.getPassword());
                 campaignContact.setProgress(campaignMessage.getVerboiceMessageNumber());
 
                 try {

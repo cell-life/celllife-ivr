@@ -1,5 +1,6 @@
 package org.celllife.ivr.application.verboice;
 
+import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.exception.IvrException;
 
 public interface VerboiceApplicationService {
@@ -7,13 +8,12 @@ public interface VerboiceApplicationService {
     /**
      * Enqueues a call to the Verboice server.
      *
-     * @param channelName Name of the channel to use, on the Verboice server.
-     * @param callFlowName Name of the call flow to use, on the Verboice server.
-     * @param scheduleName Name of the schedule to use, on the Verboice server.
+     * @param campaign The campaign for which this call is queued.
      * @param msisdn Phone number to enqueue a call for.
      * @param messageNumber Message number to use, in the Verboice call flow on the Verboice server.
+     * @param password Call Password.
      * @throws IvrException
      */
-    void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password);
+    void enqueueCallForMsisdn(Campaign campaign, String msisdn, int messageNumber, String password);
 
 }

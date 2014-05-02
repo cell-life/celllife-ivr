@@ -4,6 +4,7 @@ import org.celllife.ivr.application.campaign.CampaignService;
 import org.celllife.ivr.application.utils.JsonUtils;
 import org.celllife.ivr.domain.callog.CallLog;
 import org.celllife.ivr.domain.callog.CallLogRepository;
+import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.integration.verboice.VerboiceService;
 import org.json.JSONException;
@@ -33,12 +34,12 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
     CallLogRepository callLogRepository;
 
     @Override
-    public void enqueueCallForMsisdn(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password)  {
+    public void enqueueCallForMsisdn(Campaign campaign, String msisdn, int messageNumber, String password)  {
 
         String response = "";
 
         try {
-            response = verboiceService.enqueueCallWithPassword(channelName, callFlowName, scheduleName, msisdn, messageNumber, password);
+            response = verboiceService.enqueueCallWithPassword(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), msisdn, messageNumber, password);
         } catch (IvrException e) {
             log.warn("Could not enqueue call to verboice. Reason: " +e.getMessage());
         }
@@ -53,11 +54,11 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
 
         if (responseVariables.containsKey("call_id")) {
             callLogRepository.save(new CallLog(new Date(), Long.parseLong(responseVariables.get("call_id")), msisdn,
-                    channelName, callFlowName, scheduleName, responseVariables.get("state"), messageNumber, password));
+                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), responseVariables.get("state"), messageNumber, password, campaign.getVerboiceProjectId().intValue()));
         } else {
             log.warn("No call ID returned from Verboice server.");
             callLogRepository.save(new CallLog(new Date(), null, msisdn,
-                   channelName, callFlowName, scheduleName, "ERROR", messageNumber, password));
+                   campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), "ERROR", messageNumber, password,campaign.getVerboiceProjectId().intValue()));
         }
 
     }

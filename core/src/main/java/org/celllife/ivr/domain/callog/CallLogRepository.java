@@ -6,4 +6,6 @@ public interface CallLogRepository extends PagingAndSortingRepository<CallLog, L
 
     Iterable<CallLog> findByVerboiceId(Long verboiceId);
 
+    Iterable<CallLog> findByVerboiceProjectIdAndMsisdnAndMessageNumberOrderByDateDesc(Integer verboiceProjectId, String msisdn, Integer messageNumber);
+
 }

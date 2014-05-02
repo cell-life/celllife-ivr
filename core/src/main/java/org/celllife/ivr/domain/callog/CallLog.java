@@ -46,11 +46,15 @@ public class CallLog implements Serializable {
 
     private String state;
 
+    private String passwordEntered;
+
+    private Integer verboiceProjectId;
+
     public CallLog() {
 
     }
 
-    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber) {
+    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, Integer verboiceProjectId) {
         this.id = id;
         this.date = date;
         this.verboiceId = verboiceId;
@@ -60,9 +64,10 @@ public class CallLog implements Serializable {
         this.callFlowName = callFlowName;
         this.scheduleName = scheduleName;
         this.state = state;
+        this.verboiceProjectId = verboiceProjectId;
     }
 
-    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password) {
+    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password, Integer verboiceProjectId) {
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
@@ -72,6 +77,7 @@ public class CallLog implements Serializable {
         this.scheduleName = scheduleName;
         this.state = state;
         this.password = password;
+        this.verboiceProjectId = verboiceProjectId;
     }
 
     public Date getDate() {
@@ -144,6 +150,22 @@ public class CallLog implements Serializable {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getPasswordEntered() {
+        return passwordEntered;
+    }
+
+    public void setPasswordEntered(String passwordEntered) {
+        this.passwordEntered = passwordEntered;
+    }
+
+    public Integer getVerboiceProjectId() {
+        return verboiceProjectId;
+    }
+
+    public void setVerboiceProjectId(Integer verboiceProjectId) {
+        this.verboiceProjectId = verboiceProjectId;
     }
 
     @Override

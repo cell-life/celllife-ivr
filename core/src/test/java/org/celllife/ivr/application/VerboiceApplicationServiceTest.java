@@ -1,6 +1,7 @@
 package org.celllife.ivr.application;
 
 import org.celllife.ivr.application.verboice.VerboiceApplicationService;
+import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -19,7 +20,13 @@ public class VerboiceApplicationServiceTest extends TestConfiguration {
     @Test
     public void testEnqueueCallForMsisdn() throws Exception{
 
-        verboiceApplicationService.enqueueCallForMsisdn("Skype Channel", "Call #1", "Test", "27721234567", 1, "1234");
+        Campaign campaign = new Campaign();
+        campaign.setChannelName("Skype Channel");
+        campaign.setCallFlowName("Call #1");
+        campaign.setScheduleName("Test");
+        campaign.setVerboiceProjectId(10L);
+
+        verboiceApplicationService.enqueueCallForMsisdn(campaign, "27721234567", 1, "1234");
 
     }
 
