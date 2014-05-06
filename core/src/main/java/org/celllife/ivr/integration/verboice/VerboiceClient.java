@@ -57,8 +57,8 @@ public final class VerboiceClient {
         method.addHeader(verboiceAuthenticationHeader);
         method.addHeader("Accept", "application/json");
 
-        HttpConnectionParams.setConnectionTimeout(method.getParams(), 10000);
-        HttpConnectionParams.setSoTimeout(method.getParams(), 10000);
+        HttpConnectionParams.setConnectionTimeout(method.getParams(), 30000);
+        HttpConnectionParams.setSoTimeout(method.getParams(), 30000);
 
         return method;
     }

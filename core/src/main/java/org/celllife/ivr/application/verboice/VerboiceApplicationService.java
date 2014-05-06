@@ -14,6 +14,6 @@ public interface VerboiceApplicationService {
      * @param password Call Password.
      * @throws IvrException
      */
-    void enqueueCallForMsisdn(Campaign campaign, String msisdn, int messageNumber, String password);
+    String enqueueCallForMsisdn(Campaign campaign, String msisdn, int messageNumber, String password);
 
 }
