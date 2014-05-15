@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.celllife.ivr</groupId>
         <artifactId>celllife-ivr-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>celllife-ivr-core</artifactId>
