@@ -86,9 +86,11 @@ public class BackgroundServiceImpl implements BackgroundService {
         //TODO: can make these states configurable
         List<CallLog> callLogListBusy = callLogService.findByStateAndRetryDoneAndDateGreaterThan(CallStatus.BUSY, false, midnightToday);
         List<CallLog> callLogListNoAnswer = callLogService.findByStateAndRetryDoneAndDateGreaterThan(CallStatus.NO_ANSWER, false, midnightToday);
+        List<CallLog> callLogListWaiting = callLogService.findByStateAndRetryDoneAndDateGreaterThan(CallStatus.WAITING, false, midnightToday);
 
         List<CallLog> callsToRetry = callLogListBusy;
         callsToRetry.addAll(callLogListNoAnswer);
+        callsToRetry.addAll(callLogListWaiting);
 
         return callsToRetry;
 

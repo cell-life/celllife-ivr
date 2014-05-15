@@ -14,4 +14,6 @@ public class CallStatus {
 
     public static final String IN_PROGRESS = "in-progress";
 
+    public static final String WAITING = "waiting";
+
 }
