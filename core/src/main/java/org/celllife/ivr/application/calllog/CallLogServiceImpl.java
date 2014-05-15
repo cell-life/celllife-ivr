@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -47,6 +48,18 @@ public class CallLogServiceImpl implements CallLogService {
             return callLogList.get(0); // this will return the latest one
         else
             return null;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CallLog>findByStateAndRetryDoneAndDateGreaterThan(String state, Boolean retryDone, Date date) {
+        List<CallLog> callLogList = IteratorUtils.toList(callLogRepository.findByStateAndRetryDoneAndDateGreaterThan(state,retryDone,date).iterator());
+        return callLogList;
+    }
+
+    @Override
+    public void deleteAll() {
+        callLogRepository.deleteAll();
     }
 
 }

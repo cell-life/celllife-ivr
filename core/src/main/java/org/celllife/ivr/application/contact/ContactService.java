@@ -13,6 +13,11 @@ public interface ContactService {
      */
     List<Contact> getAllContacts();
 
+    /**
+     * Gets a contact by id.
+     * @param id
+     * @return
+     */
     Contact getContactById(Long id);
 
     /**
@@ -42,6 +47,11 @@ public interface ContactService {
      */
     List<Contact> findContactsInCampaign(Long campaignId);
 
+    /**
+     * Find all non voided (active) campaign contacts.
+     * @param campaignId
+     * @return
+     */
     List<Contact> findNonVoidedContactsInCampaign(Long campaignId);
 
     /**
@@ -51,6 +61,12 @@ public interface ContactService {
      */
     List<Contact> findContactByMsisdn(String msisdn);
 
+    /**
+     * Finds a contact by msisdn and campaign.
+     * @param msisdn
+     * @param campaignId
+     * @return
+     */
     Contact findContactByMsisdnAndCampaign(String msisdn, Long campaignId);
 
     /**

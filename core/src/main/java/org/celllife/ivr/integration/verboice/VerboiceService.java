@@ -30,6 +30,12 @@ public interface VerboiceService {
      */
     String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws IvrException;
 
+    /**
+     * Gets the updated contact details from Verboice. Not currently finished.
+     * @param msisdn
+     * @param campaign
+     * @throws IvrException
+     */
     void getUpdatedContactDetails(String msisdn, Campaign campaign) throws IvrException;
 
 }

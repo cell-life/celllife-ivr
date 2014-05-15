@@ -50,11 +50,16 @@ public class CallLog implements Serializable {
 
     private Integer verboiceProjectId;
 
+    @Column(columnDefinition = "BIT", length = 1)
+    private Boolean retryDone;
+
+    private Integer attempt;
+
     public CallLog() {
 
     }
 
-    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, Integer verboiceProjectId) {
+    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, Integer verboiceProjectId, Integer attempt, Boolean retryDone) {
         this.id = id;
         this.date = date;
         this.verboiceId = verboiceId;
@@ -65,9 +70,11 @@ public class CallLog implements Serializable {
         this.scheduleName = scheduleName;
         this.state = state;
         this.verboiceProjectId = verboiceProjectId;
+        this.attempt = attempt;
+        this.retryDone = retryDone;
     }
 
-    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password, Integer verboiceProjectId) {
+    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password, Integer verboiceProjectId , Integer attempt, Boolean retryDone) {
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
@@ -78,6 +85,12 @@ public class CallLog implements Serializable {
         this.state = state;
         this.password = password;
         this.verboiceProjectId = verboiceProjectId;
+        this.attempt = attempt;
+        this.retryDone = retryDone;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Date getDate() {
@@ -166,6 +179,22 @@ public class CallLog implements Serializable {
 
     public void setVerboiceProjectId(Integer verboiceProjectId) {
         this.verboiceProjectId = verboiceProjectId;
+    }
+
+    public Boolean getRetryDone() {
+        return retryDone;
+    }
+
+    public void setRetryDone(Boolean retry) {
+        this.retryDone = retry;
+    }
+
+    public Integer getAttempt() {
+        return attempt;
+    }
+
+    public void setAttempt(Integer attempt) {
+        this.attempt = attempt;
     }
 
     @Override

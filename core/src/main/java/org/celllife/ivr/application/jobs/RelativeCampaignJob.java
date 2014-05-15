@@ -102,7 +102,7 @@ public class RelativeCampaignJob {
         if (response == null) {
             log.warn("No response from Verboice server.");
             CallLog callLog = new CallLog(new Date(), null, contact.getMsisdn(),
-                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), "waiting", messageNumber, contact.getPassword(), campaign.getVerboiceProjectId().intValue());
+                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), "waiting", messageNumber, contact.getPassword(), campaign.getVerboiceProjectId().intValue(), 1, false);
             callLogService.saveCallLog(callLog);
             return;
         }
@@ -117,14 +117,14 @@ public class RelativeCampaignJob {
         // log the call with response variables from Verboice
         if (responseVariables.containsKey("call_id")) {
             CallLog callLog = new CallLog(new Date(), Long.parseLong(responseVariables.get("call_id")), contact.getMsisdn(),
-                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), responseVariables.get("state"), messageNumber, contact.getPassword(), campaign.getVerboiceProjectId().intValue());
+                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), responseVariables.get("state"), messageNumber, contact.getPassword(), campaign.getVerboiceProjectId().intValue(), 1, false);
             callLogService.saveCallLog(callLog);
         }
         //if no response from Verboice, log the call as "waiting"
         else {
             log.warn("No call ID returned from Verboice server.");
             CallLog callLog = new CallLog(new Date(), null, contact.getMsisdn(),
-                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), "waiting", messageNumber, contact.getPassword(), campaign.getVerboiceProjectId().intValue());
+                    campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), "waiting", messageNumber, contact.getPassword(), campaign.getVerboiceProjectId().intValue(), 1, false);
             callLogService.saveCallLog(callLog);
         }
 
