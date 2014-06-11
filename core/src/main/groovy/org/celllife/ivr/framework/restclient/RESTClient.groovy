@@ -1,32 +1,35 @@
 package org.celllife.ivr.framework.restclient
 
-/**
- * User: Kevin W. Sewell
- * Date: 2013-04-03
- * Time: 13h23
- */
+import org.springframework.beans.factory.annotation.Value;
+
 class RESTClient {
 
-    def static get(String uri) {
+    @Value('${internal.username}')
+    def String username;
+
+    @Value('${internal.password}')
+    def String password;
+
+    def get(String uri) {
 
         def client = new groovyx.net.http.RESTClient(uri)
-        client.auth.basic("internal", "password")
+        client.auth.basic(username, password)
 
         return client.get([:]).data
     }
 
-    def static get(String uri, Map<String, Object> query) {
+    def get(String uri, Map<String, Object> query) {
 
         def client = new groovyx.net.http.RESTClient(uri)
-        client.auth.basic("internal", "password")
+        client.auth.basic(username, password)
 
         return client.get(query:query).data
     }
 
-    def static post(String uri, Map<String, Object> query) {
+    def post(String uri, Map<String, Object> query) {
 
         def client = new groovyx.net.http.RESTClient(uri)
-        client.auth.basic("internal", "password")
+        client.auth.basic(username, password)
 
         return client.post(query:query).data
 

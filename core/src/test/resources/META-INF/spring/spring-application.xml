@@ -6,6 +6,7 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.celllife.ivr.application"/>
+    <context:component-scan base-package="org.celllife.ivr.framework"/>
 
     <import resource="spring-ivr-service-context.xml" />
 
