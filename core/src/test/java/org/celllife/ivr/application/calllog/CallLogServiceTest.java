@@ -1,7 +1,7 @@
 package org.celllife.ivr.application.calllog;
 
 import junit.framework.Assert;
-import org.celllife.ivr.domain.callog.CallLog;
+import org.celllife.ivr.domain.calllog.CallLog;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
 import org.junit.Test;

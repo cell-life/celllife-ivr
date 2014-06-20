@@ -1,4 +1,4 @@
-package org.celllife.ivr.domain.callog;
+package org.celllife.ivr.domain.calllog;
 
 public class CallStatus {
 

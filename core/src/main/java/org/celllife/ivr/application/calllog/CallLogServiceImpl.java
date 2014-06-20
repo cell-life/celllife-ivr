@@ -1,8 +1,8 @@
 package org.celllife.ivr.application.calllog;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.celllife.ivr.domain.callog.CallLog;
-import org.celllife.ivr.domain.callog.CallLogRepository;
+import org.celllife.ivr.domain.calllog.CallLog;
+import org.celllife.ivr.domain.calllog.CallLogRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

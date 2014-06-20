@@ -1,6 +1,6 @@
 package org.celllife.ivr.application.calllog;
 
-import org.celllife.ivr.domain.callog.CallLog;
+import org.celllife.ivr.domain.calllog.CallLog;
 
 import java.util.Date;
 import java.util.List;
