@@ -6,7 +6,7 @@ import org.celllife.ivr.application.contact.ContactService;
 import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.application.utils.JsonUtils;
 import org.celllife.ivr.application.verboice.VerboiceApplicationService;
-import org.celllife.ivr.domain.callog.CallLog;
+import org.celllife.ivr.domain.calllog.CallLog;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.exception.ContactExistsException;
