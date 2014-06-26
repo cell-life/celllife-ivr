@@ -41,4 +41,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="dine@cell-life.org" id="calllog-5">
+        <addColumn tableName="call_log">
+            <column name="campaign_id" type="BIGINT"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

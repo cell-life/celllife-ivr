@@ -50,6 +50,8 @@ public class CallLog implements Serializable {
 
     private Integer verboiceProjectId;
 
+    private Long campaignId;
+
     @Column(columnDefinition = "BIT", length = 1)
     private Boolean retryDone;
 
@@ -59,7 +61,7 @@ public class CallLog implements Serializable {
 
     }
 
-    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, Integer verboiceProjectId, Integer attempt, Boolean retryDone) {
+    public CallLog(Long id, Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, Integer verboiceProjectId, Integer attempt, Boolean retryDone, Long campaignId) {
         this.id = id;
         this.date = date;
         this.verboiceId = verboiceId;
@@ -72,9 +74,10 @@ public class CallLog implements Serializable {
         this.verboiceProjectId = verboiceProjectId;
         this.attempt = attempt;
         this.retryDone = retryDone;
+        this.campaignId = campaignId;
     }
 
-    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password, Integer verboiceProjectId , Integer attempt, Boolean retryDone) {
+    public CallLog(Date date, Long verboiceId, String msisdn, String channelName, String callFlowName, String scheduleName, String state, int messageNumber, String password, Integer verboiceProjectId , Integer attempt, Boolean retryDone, Long campaignId) {
         this.date = date;
         this.verboiceId = verboiceId;
         this.msisdn = msisdn;
@@ -87,6 +90,7 @@ public class CallLog implements Serializable {
         this.verboiceProjectId = verboiceProjectId;
         this.attempt = attempt;
         this.retryDone = retryDone;
+        this.campaignId = campaignId;
     }
 
     public Long getId() {
@@ -195,6 +199,14 @@ public class CallLog implements Serializable {
 
     public void setAttempt(Integer attempt) {
         this.attempt = attempt;
+    }
+
+    public Long getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(Long campaignId) {
+        this.campaignId = campaignId;
     }
 
     @Override

@@ -66,7 +66,7 @@ public class BackgroundServiceImpl implements BackgroundService {
             log.error("Error enqueuing call to Verboice. Call will be logged as 'waiting'.", e);
         }
 
-        logCall(response, callLog.getMsisdn(), callLog.getPassword(), callLog.getMessageNumber(), callLog.getChannelName(), callLog.getCallFlowName(), callLog.getScheduleName(), attempt, callLog.getVerboiceProjectId());
+        logCall(response, callLog.getMsisdn(), callLog.getPassword(), callLog.getMessageNumber(), callLog.getChannelName(), callLog.getCallFlowName(), callLog.getScheduleName(), attempt, callLog.getVerboiceProjectId(), callLog.getCampaignId());
 
         callLog.setRetryDone(true);
         callLogService.saveCallLog(callLog);
@@ -96,13 +96,13 @@ public class BackgroundServiceImpl implements BackgroundService {
 
     }
 
-    protected void logCall(String response, String msisdn, String password, Integer messageNumber, String channelName, String callFlowName, String scheduleName, Integer attempt, Integer verboiceProjectId) {
+    protected void logCall(String response, String msisdn, String password, Integer messageNumber, String channelName, String callFlowName, String scheduleName, Integer attempt, Integer verboiceProjectId, Long campaignId) {
 
         //if no response from Verboice, log the call as "waiting"
         if (response == null) {
             log.warn("No response from Verboice server.");
             CallLog callLog = new CallLog(new Date(), null, msisdn,
-                    channelName, callFlowName, scheduleName, "waiting", messageNumber, password, verboiceProjectId, attempt, false);
+                    channelName, callFlowName, scheduleName, "waiting", messageNumber, password, verboiceProjectId, attempt, false, campaignId);
             callLogService.saveCallLog(callLog);
             return;
         }
@@ -117,13 +117,13 @@ public class BackgroundServiceImpl implements BackgroundService {
         // log the call with response variables from Verboice
         if (responseVariables.containsKey("call_id")) {
             CallLog callLog = new CallLog(new Date(), Long.parseLong(responseVariables.get("call_id")), msisdn,
-                    channelName, callFlowName, scheduleName, responseVariables.get("state"), messageNumber, password, verboiceProjectId, attempt, false);
+                    channelName, callFlowName, scheduleName, responseVariables.get("state"), messageNumber, password, verboiceProjectId, attempt, false, campaignId);
             callLogService.saveCallLog(callLog);
         }
         //if no response from Verboice, log the call as "waiting"
         else {
             log.warn("No call ID returned from Verboice server.");
-            CallLog callLog = new CallLog(new Date(), null, msisdn, channelName, callFlowName, scheduleName, "waiting", messageNumber, password, verboiceProjectId, attempt, false);
+            CallLog callLog = new CallLog(new Date(), null, msisdn, channelName, callFlowName, scheduleName, "waiting", messageNumber, password, verboiceProjectId, attempt, false, campaignId);
             callLogService.saveCallLog(callLog);
         }
 
