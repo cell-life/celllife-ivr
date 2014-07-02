@@ -87,7 +87,7 @@ public class CampaignServiceImpl implements CampaignService {
                     triggerName = createQuartzTriggerForCampaign(campaign.getId(), campaignMessage.getMessageTime(), campaignMessage.getMessageSlot());
                     newTriggers.add(triggerName);
                 } catch (ParseException e) {
-                    log.warn("The message time " + campaignMessage.getMessageTime() + " is invalid. Times must be in format hh:mm. Trigger for this message will not be added.");
+                    log.warn("The message time " + campaignMessage.getMessageTime() + " is invalid. Times must be in format HH:mm. Trigger for this message will not be added.");
                 } catch (SchedulerException e) {
                     log.info("Could not schedule trigger for campaign message with id " + campaignMessage.getId() + ". Reason: " + e.getLocalizedMessage());
                 }
@@ -123,7 +123,7 @@ public class CampaignServiceImpl implements CampaignService {
                 try {
                     newCampaignMessage = new CampaignMessage(campaignMessageDtosForDay.get(j).getVerboiceMessageNumber(), msgDay, msgSlot, convertStringToHoursMinutes(campaignMessageDtosForDay.get(j).getMessageTimeOfDay()), campaignId, sequenceNumber);
                 } catch (ParseException e) {
-                    throw new IvrException(e.getLocalizedMessage() + "The message time " + campaignMessageDtosForDay.get(j).getMessageTimeOfDay() + " is invalid. Times must be in format hh:mm");
+                    throw new IvrException(e.getLocalizedMessage() + "The message time " + campaignMessageDtosForDay.get(j).getMessageTimeOfDay() + " is invalid. Times must be in format HH:mm");
                 }
                 campaignMessages.add(newCampaignMessage);
                 campaignMessageService.save(newCampaignMessage);
@@ -173,7 +173,7 @@ public class CampaignServiceImpl implements CampaignService {
 
     protected Date convertStringToHoursMinutes(String messageTime) throws ParseException {
 
-        DateFormat formatter = new SimpleDateFormat("hh:mm");
+        DateFormat formatter = new SimpleDateFormat("HH:mm");
         return ((Date) formatter.parse(messageTime));
 
     }
