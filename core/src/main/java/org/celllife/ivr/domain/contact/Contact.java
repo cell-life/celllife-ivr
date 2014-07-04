@@ -44,12 +44,13 @@ public class Contact implements Serializable {
 
     }
 
-    public Contact(Long id, String msisdn, String password, Long campaignId, int progress) {
+    public Contact(Long id, String msisdn, String password, Long campaignId, int progress, boolean voided) {
         this.id = id;
         setMsisdn(msisdn);
         setPassword(password);
         setProgress(progress);
         setCampaignId(campaignId);
+        setVoided(voided);
     }
 
     public Contact(String msisdn, String password, Long campaignId, int progress) throws InvalidMsisdnException {
@@ -60,6 +61,7 @@ public class Contact implements Serializable {
         setPassword(password);
         setProgress(progress);
         setCampaignId(campaignId);
+        setVoided(false);
     }
 
     public ContactDto getContactDto() {
