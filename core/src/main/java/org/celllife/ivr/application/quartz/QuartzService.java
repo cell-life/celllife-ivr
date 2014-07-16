@@ -1,8 +1,9 @@
 package org.celllife.ivr.application.quartz;
 
+import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.springframework.scheduling.quartz.CronTriggerBean;
+import org.quartz.Trigger;
 
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface QuartzService {
      * @param trigger Trigger to add.
      * @throws Exception
      */
-    void addTrigger(CronTriggerBean trigger) throws SchedulerException;
+    void addTrigger(Trigger trigger) throws SchedulerException;
 
     /**
      * Removes a quartz trigger.
@@ -49,5 +50,7 @@ public interface QuartzService {
      * @return Scheuler for the quartz service.
      */
     Scheduler getScheduler();
+
+    List<CronTrigger> findTriggerByJobNameAndGroup(String jobName, String jobGroup) throws SchedulerException;
 
 }

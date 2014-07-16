@@ -11,7 +11,7 @@ public class JsonUtils {
 
     /**
      * Converts a Json string to a Map;
-     * @param s The Json to convert.
+     * @params The Json to convert.
      * @return A map of variables.
      * @throws JSONException
      */

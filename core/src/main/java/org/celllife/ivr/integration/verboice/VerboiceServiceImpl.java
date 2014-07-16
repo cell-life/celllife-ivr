@@ -81,6 +81,8 @@ public class VerboiceServiceImpl implements VerboiceService {
 
     }
 
+    //TODO: This is not being used at present.
+    // I'm leaving it in here because I think it will be of use in future.
     @Override
     public void getUpdatedContactDetails(String msisdn, Campaign campaign) throws IvrException {
 

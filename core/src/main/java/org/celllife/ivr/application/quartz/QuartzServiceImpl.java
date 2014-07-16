@@ -1,21 +1,16 @@
 package org.celllife.ivr.application.quartz;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
+import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Service
 public class QuartzServiceImpl implements QuartzService {
@@ -45,7 +40,8 @@ public class QuartzServiceImpl implements QuartzService {
         try {
             List<String> triggers = getTriggers(groupName);
             for (String trigger : triggers) {
-                boolean unscheduleJob = scheduler.unscheduleJob(trigger, groupName);
+                TriggerKey triggerKey = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(trigger)).iterator().next();
+                boolean unscheduleJob = scheduler.unscheduleJob(triggerKey);
                 if (unscheduleJob) {
                     log.debug("Trigger : [{}] deleted for group : [{}]", trigger, groupName);
                 } else {
@@ -64,8 +60,10 @@ public class QuartzServiceImpl implements QuartzService {
         ArrayList<String> list = new ArrayList<String>();
 
         try {
-            String[] triggers = scheduler.getTriggerNames(groupName);
-            CollectionUtils.addAll(list, triggers);
+            Set<TriggerKey> triggers = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(groupName));
+            for (TriggerKey triggerKey : triggers) {
+                list.add(triggerKey.getName());
+            }
             return list;
         } catch (SchedulerException e) {
             log.error("Error checking triggers [group=" + groupName + "]", e);
@@ -76,29 +74,60 @@ public class QuartzServiceImpl implements QuartzService {
     private boolean doesTriggerExist(String triggerGroup, String triggerName) {
 
         try {
-            Trigger triggerNames = scheduler.getTrigger(triggerName, triggerGroup);
-            return triggerNames != null;
+            TriggerKey triggerKey = findTriggerKeyByTriggerGroupAndName(triggerName, triggerGroup);
+            if (triggerKey != null)
+                return true;
+            else
+                return false;
         } catch (SchedulerException e) {
-            log.error("Error checking triggers [name=" + triggerName + "] [group=" + triggerGroup + "]", e);
+            log.warn("Could not find trigger " + triggerName + " in group " + triggerGroup, e);
+            return false;
         }
-
-        return false;
     }
 
     @Override
     public void removeTrigger(String triggerName, String groupName) throws SchedulerException {
-        scheduler.unscheduleJob(triggerName, groupName);
+        TriggerKey triggerKey = findTriggerKeyByTriggerGroupAndName(triggerName, groupName);
+        if (triggerKey != null) {
+            scheduler.unscheduleJob(triggerKey);
+        } else {
+            log.warn("Could not remove trigger " + triggerName + " in group " + groupName + " because it was not found.");
+        }
     }
 
     @Override
-    public void addTrigger(CronTriggerBean trigger) throws SchedulerException {
-            scheduler.scheduleJob(trigger);
+    public void addTrigger(Trigger trigger) throws SchedulerException {
+        scheduler.scheduleJob(trigger);
 
     }
 
     @Override
     public Scheduler getScheduler() {
         return scheduler;
+    }
+
+    protected TriggerKey findTriggerKeyByTriggerGroupAndName(String triggerName, String groupName) throws SchedulerException {
+        Set<TriggerKey> triggerKeys = scheduler.getTriggerKeys(GroupMatcher.triggerGroupEquals(groupName));
+        for (TriggerKey triggerKey : triggerKeys) {
+            if (triggerKey.getName().equals(triggerName)) {
+                return triggerKey;
+            }
+        }
+        return null;
+    }
+
+    public List<CronTrigger> findTriggerByJobNameAndGroup(String jobName, String jobGroup) throws SchedulerException {
+
+        Set<JobKey> jobkeys = scheduler.getJobKeys(GroupMatcher.jobGroupEquals(jobGroup));
+        List<CronTrigger> triggers = new ArrayList<>();
+        for (JobKey jobKey : jobkeys) {
+            if (jobKey.getName().equals(jobName)) {
+                return (List<CronTrigger>) getScheduler().getTriggersOfJob(jobKey);
+            }
+        }
+
+        return null;
+
     }
 
 }

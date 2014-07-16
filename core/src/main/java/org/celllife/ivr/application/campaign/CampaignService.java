@@ -5,6 +5,7 @@ import org.celllife.ivr.domain.exception.CampaignNameExistsException;
 import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageDto;
+import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
@@ -40,7 +41,7 @@ public interface CampaignService {
      * Gets the system scheduler.
      * @return The quartz scheduler.
      */
-    Scheduler getScheduler();
+    Scheduler getScheduler(); //TODO: try and figure out how not to expose
 
     /**
      * Deletes all campaigns.
@@ -59,16 +60,17 @@ public interface CampaignService {
      * @param groupName The group name.
      * @throws SchedulerException
      */
-    void deleteTrigger(String triggerName, String groupName) throws SchedulerException;
+    void deleteTrigger(String triggerName, String groupName) throws SchedulerException; //TODO: try and figure out how not to expose
 
     /**
-     * Sets the messages for a particular campaign. NB: Overrides any previous messages that were set.
+     * Sets the messages for a particular campaign.
+     * NB: Overrides any previous messages that were set. (Please don't hate me for this, I honestly thought it was the right thing to do.)
      * @param campaignId
      * @param campaignMessageDtos
      * @return The list of messages, as set in the campaign.
      * @throws IvrException
      */
-    List<CampaignMessage> setMessagesForCampaign(Long campaignId, List<CampaignMessageDto> campaignMessageDtos) throws IvrException;
+    List<CampaignMessage> setMessagesForCampaign(Long campaignId, List<CampaignMessageDto> campaignMessageDtos) throws IvrException; //TODO: think of using replace instead
 
     /**
      * Returns all campaigns with a particular name.
@@ -76,6 +78,8 @@ public interface CampaignService {
      * @return A list of campaigns.
      */
     List<Campaign> findCampaignByName(String name);
+
+    List<CronTrigger> findTriggerByJobNameAndGroup(String jobName, String jobGroup) throws SchedulerException; //TODO: try and figure out how not to expose
 
 
 }

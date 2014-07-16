@@ -1,15 +1,13 @@
 package org.celllife.ivr.application.campaign;
 
 import junit.framework.Assert;
-import org.celllife.ivr.application.campaign.CampaignService;
 import org.celllife.ivr.domain.campaign.Campaign;
-import org.celllife.ivr.domain.campaign.CampaignType;
 import org.celllife.ivr.test.TestConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.quartz.Trigger;
+import org.quartz.CronTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -61,11 +59,11 @@ public class CampaignServiceTest extends TestConfiguration {
 
         campaignService.setMessagesForDailyCampaign(campaign.getId(), verboiceMessageNumbers, timesOfMessages);
 
-        Trigger[] triggers = campaignService.getScheduler().getTriggersOfJob("relativeCampaignJobRunner", "campaignJobs");
-        Assert.assertEquals(1,triggers.length);
+        List<CronTrigger> triggers = campaignService.findTriggerByJobNameAndGroup("relativeCampaignJobRunner", "campaignJobs");
+        Assert.assertEquals(1,triggers.size());
 
         Calendar triggerCalendar = Calendar.getInstance();
-        triggerCalendar.setTime(triggers[0].getNextFireTime());
+        triggerCalendar.setTime(triggers.get(0).getNextFireTime());
         Assert.assertEquals(9,triggerCalendar.get(Calendar.HOUR));
         Assert.assertEquals(0,triggerCalendar.get(Calendar.MINUTE));
 

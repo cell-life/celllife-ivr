@@ -35,7 +35,7 @@ public class Contact implements Serializable {
     @Basic(optional=false)
     private Long campaignId;
 
-    private Integer verboiceContactId;
+    private Integer verboiceContactId; //TODO: Not used at the moment
 
     @Column(columnDefinition = "BIT", length = 1)
     private boolean voided = false;

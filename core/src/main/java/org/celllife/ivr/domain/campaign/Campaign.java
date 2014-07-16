@@ -29,13 +29,13 @@ public class Campaign implements Serializable {
     @Basic(optional=false)
     private int duration = 0;
 
-	private Date endDate;
+	private Date endDate; //TODO: Not used at the moment
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate;
+    private Date startDate; //TODO: Not used at the moment
 
     @Enumerated(EnumType.STRING)
-    private CampaignStatus status;
+    private CampaignStatus status; //TODO: Not used at the moment
 
     @Basic(optional=false)
     private String callFlowName;

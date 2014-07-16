@@ -1,8 +1,8 @@
 package org.celllife.ivr.application.campaign;
 
-import org.celllife.ivr.application.quartz.QuartzService;
 import org.celllife.ivr.application.jobs.RelativeCampaignJobRunner;
 import org.celllife.ivr.application.message.CampaignMessageService;
+import org.celllife.ivr.application.quartz.QuartzService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignRepository;
 import org.celllife.ivr.domain.exception.CampaignNameExistsException;
@@ -10,13 +10,11 @@ import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.dozer.util.IteratorUtils;
-import org.quartz.CronExpression;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
+import org.quartz.impl.JobDetailImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.CronTriggerBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +23,8 @@ import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static org.quartz.TriggerBuilder.newTrigger;
 
 @Service
 @Transactional("transactionManager")
@@ -67,6 +67,52 @@ public class CampaignServiceImpl implements CampaignService {
         }
     }
 
+    @Override
+    public List<CampaignMessage> setMessagesForCampaign(Long campaignId, List<CampaignMessageDto> campaignMessageDtos) throws IvrException {
+
+        Campaign campaign = getCampaign(campaignId);
+        List<CampaignMessage> oldCampaignMessages = campaignMessageService.findMessagesInCampaign(campaignId);
+        List<CampaignMessage> campaignMessages = new ArrayList<>();
+        Integer sequenceNumber = 0;
+
+        // Create new messages, which includes calculating their sequences.
+        for (int i = 0; i < campaign.getDuration(); i++) {
+            int msgDay = i + 1;
+            List<CampaignMessageDto> campaignMessageDtosForDay = findAndSortCampaignMessagesForDay(msgDay, campaignMessageDtos);
+
+            for (int j = 0; j < campaignMessageDtosForDay.size(); j++) {
+                sequenceNumber = sequenceNumber + 1;
+                int msgSlot = j + 1;
+                CampaignMessage newCampaignMessage = null;
+                try {
+                    newCampaignMessage = new CampaignMessage(campaignMessageDtosForDay.get(j).getVerboiceMessageNumber(), msgDay, msgSlot, convertStringToHoursMinutes(campaignMessageDtosForDay.get(j).getMessageTimeOfDay()), campaignId, sequenceNumber);
+                } catch (ParseException e) {
+                    throw new IvrException(e.getLocalizedMessage() + "The message time " + campaignMessageDtosForDay.get(j).getMessageTimeOfDay() + " is invalid. Times must be in format HH:mm");
+                }
+                campaignMessages.add(newCampaignMessage);
+                campaignMessageService.save(newCampaignMessage);
+            }
+
+        }
+
+        createTriggersForMessages(campaignMessages, campaign); // Creates new quartz triggers for messages.
+
+        for (CampaignMessage campaignMessage : oldCampaignMessages) {
+            campaignMessageService.deleteMessage(campaignMessage.getId());
+        }
+
+        return campaignMessages;
+    }
+
+    /* Creates quartz triggers for messages and deletes existing quartz triggers.
+       Trigger properties:
+            Trigger Name - format: CampaignName-[slot=n]-[time=HH:mm:ss aa] eg. "Test Campaign-[slot=1]-[time=12:00:00 PM]" [CampaignNa
+            Trigger Group - format: org.celllife.ivr.domain.campaign.Campaign:1
+            JobData - PROP_CAMPAIGN_ID, PROP_MSGTIME, PROP_MSGSLOT
+            Job Name - "relativeCampaignJobRunner"
+            Job Group - "campaignJobs"
+            CronExpression
+    */
     protected void createTriggersForMessages(List<CampaignMessage> campaignMessages, Campaign campaign) throws IvrException {
 
         String group = campaign.getIdentifierString();
@@ -104,42 +150,7 @@ public class CampaignServiceImpl implements CampaignService {
         }
     }
 
-    @Override
-    public List<CampaignMessage> setMessagesForCampaign(Long campaignId, List<CampaignMessageDto> campaignMessageDtos) throws IvrException {
-
-        Campaign campaign = getCampaign(campaignId);
-        List<CampaignMessage> oldCampaignMessages = campaignMessageService.findMessagesInCampaign(campaignId);
-        List<CampaignMessage> campaignMessages = new ArrayList<>();
-        Integer sequenceNumber = 0;
-
-        for (int i = 0; i < campaign.getDuration(); i++) {
-            int msgDay = i + 1;
-            List<CampaignMessageDto> campaignMessageDtosForDay = findAndSortCampaignMessagesForDay(msgDay, campaignMessageDtos);
-
-            for (int j = 0; j < campaignMessageDtosForDay.size(); j++) {
-                sequenceNumber = sequenceNumber + 1;
-                int msgSlot = j + 1;
-                CampaignMessage newCampaignMessage = null;
-                try {
-                    newCampaignMessage = new CampaignMessage(campaignMessageDtosForDay.get(j).getVerboiceMessageNumber(), msgDay, msgSlot, convertStringToHoursMinutes(campaignMessageDtosForDay.get(j).getMessageTimeOfDay()), campaignId, sequenceNumber);
-                } catch (ParseException e) {
-                    throw new IvrException(e.getLocalizedMessage() + "The message time " + campaignMessageDtosForDay.get(j).getMessageTimeOfDay() + " is invalid. Times must be in format HH:mm");
-                }
-                campaignMessages.add(newCampaignMessage);
-                campaignMessageService.save(newCampaignMessage);
-            }
-
-        }
-
-        createTriggersForMessages(campaignMessages, campaign);
-
-        for (CampaignMessage campaignMessage : oldCampaignMessages) {
-            campaignMessageService.deleteMessage(campaignMessage.getId());
-        }
-
-        return campaignMessages;
-    }
-
+    // This finds all the messages for a particular day, and sorts them ascending order (i.e. earliest message first.)
     protected List<CampaignMessageDto> findAndSortCampaignMessagesForDay(Integer day, List<CampaignMessageDto> campaignMessageDtos) {
 
         List<CampaignMessageDto> dtosToReturn = new ArrayList<>();
@@ -182,7 +193,7 @@ public class CampaignServiceImpl implements CampaignService {
 
         Campaign campaign = getCampaign(campaignId);
 
-        Map<String, Object> jobMap = new HashMap<String, Object>();
+        JobDataMap jobMap = new JobDataMap();
 
         jobMap.put(RelativeCampaignJobRunner.PROP_CAMPAIGN_ID, campaignId);
         jobMap.put(RelativeCampaignJobRunner.PROP_MSGTIME, msgTime);
@@ -192,16 +203,13 @@ public class CampaignServiceImpl implements CampaignService {
         }
 
         String name = getTriggerNameForCampaign(campaignId, msgTime, msgSlot);
-        CronTriggerBean trigger = new CronTriggerBean();
-        trigger.setName(name);
-        trigger.setJobDataAsMap(jobMap);
-        trigger.setJobName("relativeCampaignJobRunner");
-        trigger.setJobGroup("campaignJobs");
-        trigger.setVolatility(false);
-        trigger.setGroup(campaign.getIdentifierString());
-
         String cronExpr = quartzService.generateCronExprForDailyOccurence(msgTime);
-        trigger.setCronExpression(new CronExpression(cronExpr));
+        CronScheduleBuilder cronScheduleBuilder =  CronScheduleBuilder.cronSchedule(cronExpr);
+        TriggerKey triggerKey = new TriggerKey(name,campaign.getIdentifierString());
+        JobDetailImpl jobDetail = new JobDetailImpl();
+        jobDetail.setName("relativeCampaignJobRunner");
+        jobDetail.setGroup("campaignJobs");
+        Trigger trigger = newTrigger().withIdentity(triggerKey).withSchedule(cronScheduleBuilder).usingJobData(jobMap).forJob(jobDetail).build();
         quartzService.addTrigger(trigger);
         log.debug("Campaign: {} scheduled with cron expression {}", campaignId, cronExpr);
 
@@ -228,6 +236,12 @@ public class CampaignServiceImpl implements CampaignService {
         Campaign campaign = getCampaign(campaignId);
         String name = MessageFormat.format("{0}-[slot={1}]-[time={2,time,medium}]", campaign.getName(), msgSlot, msgTime);
         return name;
+    }
+
+    public List<CronTrigger> findTriggerByJobNameAndGroup(String jobName, String jobGroup) throws SchedulerException {
+
+        return quartzService.findTriggerByJobNameAndGroup(jobName, jobGroup);
+
     }
 
     @Override

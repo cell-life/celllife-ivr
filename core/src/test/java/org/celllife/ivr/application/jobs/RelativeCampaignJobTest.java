@@ -1,11 +1,10 @@
 package org.celllife.ivr.application.jobs;
 
 import junit.framework.Assert;
-import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.application.campaign.CampaignService;
 import org.celllife.ivr.application.contact.ContactService;
+import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.domain.campaign.Campaign;
-import org.celllife.ivr.domain.campaign.CampaignType;
 import org.celllife.ivr.domain.contact.Contact;
 import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageDto;
@@ -14,15 +13,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.CronTrigger;
+import org.quartz.JobKey;
 import org.quartz.Trigger;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
@@ -142,9 +142,17 @@ public class RelativeCampaignJobTest extends TestConfiguration{
     @After
     public void tearDown() throws Exception {
 
-        Trigger[] triggers = campaignService.getScheduler().getTriggersOfJob("relativeCampaignJobRunner", "campaignJobs");
+        Set<JobKey> jobkeys = campaignService.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals("campaignJobs"));
+        List<CronTrigger> triggers = new ArrayList<>();
+        for (JobKey jobKey : jobkeys) {
+            if (jobKey.getName().equals("relativeCampaignJobRunner"))
+            {
+                triggers = (List<CronTrigger>)campaignService.getScheduler().getTriggersOfJob(jobKey);
+            }
+        }
         for (Trigger trigger : triggers) {
-            campaignService.deleteTrigger(trigger.getName(),trigger.getGroup());
+            TriggerKey triggerKey = trigger.getKey();
+            campaignService.getScheduler().unscheduleJob(triggerKey);
         }
         campaignService.deleteAllCampaigns();
 
