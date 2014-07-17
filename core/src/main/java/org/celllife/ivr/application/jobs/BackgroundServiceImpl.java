@@ -83,7 +83,7 @@ public class BackgroundServiceImpl implements BackgroundService {
         cal.set(Calendar.MILLISECOND, 0);
         Date midnightToday = cal.getTime();
 
-        //TODO: can make these states configurable
+        //TODO: can make these states configurable, so we can change the types of calls that get retried at run-time.
         List<CallLog> callLogListBusy = callLogService.findByStateAndRetryDoneAndDateGreaterThan(CallStatus.BUSY, false, midnightToday);
         List<CallLog> callLogListNoAnswer = callLogService.findByStateAndRetryDoneAndDateGreaterThan(CallStatus.NO_ANSWER, false, midnightToday);
         List<CallLog> callLogListWaiting = callLogService.findByStateAndRetryDoneAndDateGreaterThan(CallStatus.WAITING, false, midnightToday);
@@ -126,6 +126,6 @@ public class BackgroundServiceImpl implements BackgroundService {
             CallLog callLog = new CallLog(new Date(), null, msisdn, channelName, callFlowName, scheduleName, "waiting", messageNumber, password, verboiceProjectId, attempt, false, campaignId);
             callLogService.saveCallLog(callLog);
         }
-
     }
+
 }

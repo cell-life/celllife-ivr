@@ -142,13 +142,6 @@ public class Contact implements Serializable {
     }
 
     @Override
-    public String toString() {
-
-        // TODO: Implement toString()
-        return "";
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -172,4 +165,5 @@ public class Contact implements Serializable {
             return false;
         return true;
     }
+
 }

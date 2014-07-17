@@ -12,6 +12,7 @@ import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.dozer.util.IteratorUtils;
 import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,15 +245,15 @@ public class CampaignServiceImpl implements CampaignService {
 
     }
 
-    @Override
+    /*@Override
     public Scheduler getScheduler() {
         return quartzService.getScheduler();
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void deleteTrigger(String triggerName, String groupName) throws SchedulerException {
         quartzService.removeTrigger(triggerName, groupName);
-    }
+    }*/
 
     @Override
     public void deleteAllCampaigns() {
@@ -280,4 +281,21 @@ public class CampaignServiceImpl implements CampaignService {
         }
         return false;
     }
+
+    public void deleteAllTriggers() throws SchedulerException {
+
+        Set<JobKey> jobkeys = quartzService.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals("campaignJobs"));
+        List<CronTrigger> triggers = new ArrayList<>();
+        for (JobKey jobKey : jobkeys) {
+            if (jobKey.getName().equals("relativeCampaignJobRunner"))
+            {
+                triggers = (List<CronTrigger>)quartzService.getScheduler().getTriggersOfJob(jobKey);
+            }
+        }
+        for (Trigger trigger : triggers) {
+            TriggerKey triggerKey = trigger.getKey();
+            quartzService.getScheduler().unscheduleJob(triggerKey);
+        }
+    }
+
 }

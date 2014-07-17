@@ -13,16 +13,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.quartz.CronTrigger;
-import org.quartz.JobKey;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
@@ -142,22 +140,9 @@ public class RelativeCampaignJobTest extends TestConfiguration{
     @After
     public void tearDown() throws Exception {
 
-        Set<JobKey> jobkeys = campaignService.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals("campaignJobs"));
-        List<CronTrigger> triggers = new ArrayList<>();
-        for (JobKey jobKey : jobkeys) {
-            if (jobKey.getName().equals("relativeCampaignJobRunner"))
-            {
-                triggers = (List<CronTrigger>)campaignService.getScheduler().getTriggersOfJob(jobKey);
-            }
-        }
-        for (Trigger trigger : triggers) {
-            TriggerKey triggerKey = trigger.getKey();
-            campaignService.getScheduler().unscheduleJob(triggerKey);
-        }
+        campaignService.deleteAllTriggers();
         campaignService.deleteAllCampaigns();
 
     }
-
-
 
 }
