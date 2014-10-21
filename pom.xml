@@ -5,7 +5,7 @@
 
     <groupId>org.celllife.ivr</groupId>
     <artifactId>celllife-ivr-parent</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>celllife-ivr-parent</name>
