@@ -35,7 +35,7 @@ public class VerboiceServiceImpl implements VerboiceService {
     @Override
     public String enqueueCall(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber) throws Exception {
 
-        String response = null;
+        String response = "";
         String url = verboiceBaseUrl;
         try {
             url = url.concat("api/call?");
@@ -45,13 +45,12 @@ public class VerboiceServiceImpl implements VerboiceService {
             url = url.concat("&schedule=" + URLEncoder.encode(scheduleName, "UTF-8"));
             url = url.concat("&vars[message]=" + messageNumber);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.warn("Could not encode URL.", e);
+            return response;
         }
 
         log.debug("Enqueueing call to Verboice. HTTP GET " + url);
-
         response = verboiceClient.get(url);
-
         return response;
 
     }
@@ -59,7 +58,7 @@ public class VerboiceServiceImpl implements VerboiceService {
     @Override
     public String enqueueCallWithPassword(String channelName, String callFlowName, String scheduleName, String msisdn, int messageNumber, String password) throws IvrException{
 
-        String response = null;
+        String response = "";
         String url = verboiceBaseUrl;
         try {
             url = url.concat("api/call?");
@@ -70,13 +69,12 @@ public class VerboiceServiceImpl implements VerboiceService {
             url = url.concat("&vars[message]=" + messageNumber);
             url = url.concat("&vars[password]=" + password);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.warn("Could not encode URL.", e);
+            return response;
         }
 
         log.debug("Enqueueing call to Verboice. HTTP GET " + url);
-
         response = verboiceClient.get(url);
-
         return response;
 
     }
@@ -95,7 +93,8 @@ public class VerboiceServiceImpl implements VerboiceService {
             url = url.concat(URLEncoder.encode(msisdn, "UTF-8"));
             url = url.concat(".json");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.warn("Could not encode URL.", e);
+            return;
         }
 
         log.debug("Enqueueing call to Verboice. HTTP GET " + url);
@@ -106,14 +105,14 @@ public class VerboiceServiceImpl implements VerboiceService {
         try {
             responseVariables = jsonUtils.extractJsonVariables("{\"response\":" + response + "}");
         } catch (JSONException e) {
-            log.warn("Could not extract JSON variables from Verboice response " + response);
+            log.warn("Could not extract JSON variables from Verboice response " + response, e);
         }
 
         Map<String, String> contactVariables = new HashMap<>();
         try {
             contactVariables = jsonUtils.extractJsonVariables("{\"response\":" + responseVariables.get("vars") + "}");
         } catch (JSONException e) {
-            log.warn("Could not extract JSON variables from Verboice contact vars " + responseVariables.get("vars"));
+            log.warn("Could not extract JSON variables from Verboice contact vars " + responseVariables.get("vars"), e);
         }
 
         //TODO: do something with returned data

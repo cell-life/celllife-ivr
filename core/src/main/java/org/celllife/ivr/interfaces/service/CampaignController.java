@@ -5,6 +5,8 @@ import org.celllife.ivr.application.message.CampaignMessageService;
 import org.celllife.ivr.domain.campaign.Campaign;
 import org.celllife.ivr.domain.campaign.CampaignDto;
 import org.celllife.ivr.domain.campaign.CampaignStatus;
+import org.celllife.ivr.domain.exception.CampaignNameExistsException;
+import org.celllife.ivr.domain.exception.IvrException;
 import org.celllife.ivr.domain.message.CampaignMessage;
 import org.celllife.ivr.domain.message.CampaignMessageDto;
 import org.slf4j.Logger;
@@ -28,6 +30,8 @@ public class CampaignController {
 
     private static Logger log = LoggerFactory.getLogger(CampaignController.class);
 
+    public static final int SC_UNPROCESSABLE_ENTITY = 422;
+
     @Autowired
     CampaignService campaignService;
 
@@ -36,37 +40,47 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value= "/service/campaigns", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Collection<CampaignDto> createCampaign(@RequestBody List<CampaignDto> campaignDtos, HttpServletResponse response) throws Exception{
+    public Collection<CampaignDto> createCampaign(@RequestBody List<CampaignDto> campaignDtos, HttpServletResponse response) {
+
+        List<CampaignDto> campaignDtoList = new ArrayList<>(); //FIXME: this should probably return a single campaignDto, forgive me :(
 
         CampaignDto campaignDto = campaignDtos.get(0);
 
         if (campaignDtos.size() > 1) {
-            throw new Exception("You can only add one campaign at a time!");
+            log.warn("It is not possible to add more than one campaign at a time.");
+            response.setStatus(SC_UNPROCESSABLE_ENTITY);
+            return campaignDtoList;
         }
 
         Campaign campaign = new Campaign(campaignDto.getName(), campaignDto.getDescription(), campaignDto.getDuration(), campaignDto.getCallFlowName(), campaignDto.getChannelName(), campaignDto.getScheduleName(), campaignDto.getVerboiceProjectId());
         campaign.setStatus(CampaignStatus.ACTIVE);
         campaign.setStartDate(new Date());
-        campaign = campaignService.saveCampaign(campaign);
 
-        List<CampaignDto> campaignDtoList = new ArrayList<>();
-        campaignDtoList.add(campaign.getCampaignDto());
-
-        response.setStatus(HttpServletResponse.SC_CREATED);
-        return campaignDtoList;
+        try {
+            campaign = campaignService.saveCampaign(campaign);
+            campaignDtoList.add(campaign.getCampaignDto());
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            return campaignDtoList;
+        } catch (CampaignNameExistsException e) {
+            log.warn("Could not save campaign with name " + campaignDto.getName() + ". ", e);
+            response.setStatus(HttpServletResponse.SC_CONFLICT);
+            return campaignDtoList;
+        }
 
     }
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.PUT, value= "/service/campaigns/{campaignId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CampaignDto updateCampaign(@RequestBody Collection<CampaignDto> campaignDtos, @PathVariable Long campaignId) throws Exception{
+    public CampaignDto updateCampaign(@RequestBody Collection<CampaignDto> campaignDtos, @PathVariable Long campaignId, HttpServletResponse response) {
 
         CampaignDto campaignDto = campaignDtos.iterator().next();
 
         Campaign campaign = campaignService.getCampaign(campaignId);
 
         if (campaign == null) {
-            throw new Exception("A campaign with this ID doesn't exist!");
+            log.warn("A campaign with id " + campaignId + " doesn't exist.");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new CampaignDto();
         }
 
         if (campaignDto.getScheduleName() != null)
@@ -82,7 +96,13 @@ public class CampaignController {
         if (campaignDto.getName() != null)
             campaign.setName(campaignDto.getName());
 
-        campaign = campaignService.saveCampaign(campaign);
+        try {
+            campaign = campaignService.saveCampaign(campaign);
+        } catch (CampaignNameExistsException e) {
+            log.warn("Could not save campaign.", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return new CampaignDto();
+        }
 
         return campaign.getCampaignDto();
 
@@ -106,12 +126,14 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(value = "/service/campaigns/{campaignId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public CampaignDto getCampaign(@PathVariable Long campaignId) throws Exception {
+    public CampaignDto getCampaign(@PathVariable Long campaignId, HttpServletResponse response) {
 
         Campaign campaign = campaignService.getCampaign(campaignId);
 
         if (campaign == null) {
-            throw new Exception("A campaign with this ID doesn't exist!");
+            log.warn("A campaign with id " + campaignId + " doesn't exist.");
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return new CampaignDto();
         }
 
         return campaign.getCampaignDto();
@@ -121,26 +143,35 @@ public class CampaignController {
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, value = "/service/campaigns/{campaignId}/campaignMessages")
-    public Collection<CampaignMessageDto> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId, HttpServletResponse response) throws Exception {
+    public Collection<CampaignMessageDto> setMessagesForCampaign(@RequestBody List<CampaignMessageDto> campaignMessages, @PathVariable Long campaignId, HttpServletResponse response) {
+
+        Collection<CampaignMessageDto> campaignMessageDtos = new ArrayList<>();
 
         for(CampaignMessageDto campaignMessage : campaignMessages){
             DateFormat formatter = new SimpleDateFormat("HH:mm");
             try {
                 Date date = (Date)formatter.parse(campaignMessage.getMessageTimeOfDay());
             } catch (ParseException e) {
-                throw new Exception("An error occurred. Message times must be in the format HH:mm.");
+                log.warn("Message times must be in the format HH:mm.", e);
+                response.setStatus(SC_UNPROCESSABLE_ENTITY);
+                return campaignMessageDtos;
             }
         }
 
-        List<CampaignMessage> campaignMessagesReturned = campaignService.setMessagesForCampaign(campaignId,campaignMessages);
-        Collection<CampaignMessageDto> campaignMessageDtos = new ArrayList<>();
+        List<CampaignMessage> campaignMessagesReturned = null;
+        try {
+            campaignMessagesReturned = campaignService.setMessagesForCampaign(campaignId,campaignMessages);
+        } catch (IvrException e) {
+            log.warn("Could not set campaign messages.", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return campaignMessageDtos;
+        }
 
         for (CampaignMessage campaignMessage : campaignMessagesReturned) {
             campaignMessageDtos.add(campaignMessage.getCampaignMessageDto());
         }
 
         response.setStatus(HttpServletResponse.SC_CREATED);
-
         return campaignMessageDtos;
 
     }

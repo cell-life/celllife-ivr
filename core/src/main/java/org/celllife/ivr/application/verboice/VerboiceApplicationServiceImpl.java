@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
 @Service
 @Transactional("transactionManager")
 public class VerboiceApplicationServiceImpl implements VerboiceApplicationService {
@@ -35,7 +33,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
         try {
             response = verboiceService.enqueueCallWithPassword(campaign.getChannelName(), campaign.getCallFlowName(), campaign.getScheduleName(), msisdn, messageNumber, password);
         } catch (IvrException e) {
-            log.warn("Could not enqueue call to verboice. Reason: " +e.getMessage());
+            log.warn("Could not enqueue call to verboice.",e);
         }
 
         return response;
@@ -50,7 +48,7 @@ public class VerboiceApplicationServiceImpl implements VerboiceApplicationServic
         try {
             response = verboiceService.enqueueCallWithPassword(channelName, callFlowName, scheduleName, msisdn, messageNumber, password);
         } catch (IvrException e) {
-            log.warn("Could not enqueue call to verboice. Reason: " +e.getMessage());
+            log.warn("Could not enqueue call to verboice. ", e);
         }
 
         return response;

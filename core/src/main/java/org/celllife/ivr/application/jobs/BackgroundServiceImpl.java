@@ -100,7 +100,6 @@ public class BackgroundServiceImpl implements BackgroundService {
 
         //if no response from Verboice, log the call as "waiting"
         if (response == null) {
-            log.warn("No response from Verboice server.");
             CallLog callLog = new CallLog(new Date(), null, msisdn,
                     channelName, callFlowName, scheduleName, "waiting", messageNumber, password, verboiceProjectId, attempt, false, campaignId);
             callLogService.saveCallLog(callLog);
@@ -111,7 +110,7 @@ public class BackgroundServiceImpl implements BackgroundService {
         try {
             responseVariables = jsonUtils.extractJsonVariables("{\"response\":" + response + "}");
         } catch (JSONException e) {
-            log.warn("Unrecognized Response from Verboice Server. Response: " + response, e.getMessage());
+            log.warn("Unrecognized Response from Verboice Server. Response: " + response, e);
         }
 
         // log the call with response variables from Verboice

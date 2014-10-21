@@ -73,7 +73,7 @@ public class CallLogController {
         try {
             verboiceCallId = Long.valueOf(passwordVariables.get("CallSid"));
         } catch (NumberFormatException e) {
-            log.warn("Could not not detect 'CallSid' variable in verboice server response " + requestBody + ".");
+            log.warn("Could not not detect 'CallSid' variable in verboice server response " + requestBody + ".", e);
             return;
         }
 

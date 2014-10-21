@@ -136,7 +136,7 @@ public class CampaignServiceImpl implements CampaignService {
                 } catch (ParseException e) {
                     log.warn("The message time " + campaignMessage.getMessageTime() + " is invalid. Times must be in format HH:mm. Trigger for this message will not be added.");
                 } catch (SchedulerException e) {
-                    log.info("Could not schedule trigger for campaign message with id " + campaignMessage.getId() + ". Reason: " + e.getLocalizedMessage());
+                    log.info("Could not schedule trigger for campaign message with id " + campaignMessage.getId(), e);
                 }
             }
         }

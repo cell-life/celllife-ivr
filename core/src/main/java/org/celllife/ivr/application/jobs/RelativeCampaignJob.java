@@ -88,7 +88,7 @@ public class RelativeCampaignJob {
                 try {
                     contactService.saveContact(campaignContact);
                 } catch (ContactExistsException e) {
-                    log.warn("Error saving contact with id " + campaignContact.getId() + " Reason: " + e.getMessage());
+                    log.warn("Error saving contact with id " + campaignContact.getId(), e);
                 }
             }
 
@@ -111,7 +111,7 @@ public class RelativeCampaignJob {
         try {
             responseVariables = jsonUtils.extractJsonVariables("{\"response\":" + response + "}");
         } catch (JSONException e) {
-            log.warn("Unrecognized Response from Verboice Server. Response: " + response, e.getMessage());
+            log.warn("Unrecognized Response from Verboice Server. Response: " + response, e);
         }
 
         // log the call with response variables from Verboice
