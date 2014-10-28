@@ -23,7 +23,7 @@
 
     <!-- Cell-Life -->
 
-    <logger name="org.celllife" level="WARN" />
+    <logger name="org.celllife" level="DEBUG" />
 
     <!-- Hibernate -->
 
@@ -36,6 +36,10 @@
     <!-- C3P0 Connection Pool -->
 
     <logger name="com.mchange.v2" level="WARN" />
+
+    <!-- Liquibase -->
+
+    <logger name="liquibase" level="WARN" />
 
     <!-- Root -->
 

@@ -8,7 +8,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 public class VerboiceServiceTest extends TestConfiguration {
 
@@ -19,7 +18,7 @@ public class VerboiceServiceTest extends TestConfiguration {
     @Test
     public void testEnqueueCall() throws Exception {
 
-        String response = verboiceService.enqueueCallWithPassword("Stellies Skype", "Main Call Flow", "Stellies Schedule", "27724194158", 100, "2222");
+        String response = verboiceService.enqueueCallWithPassword("Skype Channel", "Stellenbosch Test", "Dine Schedule", "27724194158", 100, "2222");
 
     }
 
