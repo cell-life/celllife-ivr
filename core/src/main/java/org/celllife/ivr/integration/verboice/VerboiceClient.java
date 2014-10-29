@@ -26,6 +26,8 @@ public final class VerboiceClient {
 
     public String get(String url) throws IvrException {
 
+        String responseString = "";
+
         HttpGet httpGet = newHttpGetMethod(url);
 
         HttpResponse response = execute(httpGet);
@@ -34,8 +36,9 @@ public final class VerboiceClient {
             throw new IvrException("No response from server at " + url);
         }
         if (response.getStatusLine().getStatusCode() != 200) {
+            responseString = response.getStatusLine().toString();
             httpGet.releaseConnection();
-            throw new IvrException(response.getStatusLine().toString());
+            throw new IvrException(responseString);
         }
 
         HttpEntity responseEntity = response.getEntity();
@@ -44,9 +47,16 @@ public final class VerboiceClient {
             return null;
         }
 
+        try {
+            responseString = toString(responseEntity);
+        } catch (IOException e) {
+            httpGet.releaseConnection();
+            throw new RuntimeException(e);
+        }
+
         httpGet.releaseConnection();
 
-        return toString(responseEntity);
+        return responseString;
 
     }
 
@@ -61,18 +71,15 @@ public final class VerboiceClient {
         return method;
     }
 
-    private String toString(HttpEntity responseEntity)  {
-        try {
-            return EntityUtils.toString(responseEntity);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    private String toString(HttpEntity responseEntity) throws IOException {
+        return EntityUtils.toString(responseEntity);
     }
 
     private HttpResponse execute(HttpGet method)  {
         try {
             return verboiceHttpClient.execute(method, (HttpContext) null);
         } catch (IOException e) {
+            method.releaseConnection();
             throw new RuntimeException(e);
         }
     }
