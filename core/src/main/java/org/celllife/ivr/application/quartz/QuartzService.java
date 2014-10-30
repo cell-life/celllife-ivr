@@ -51,6 +51,13 @@ public interface QuartzService {
      */
     Scheduler getScheduler();
 
+    /**
+     * Finds triggers by job name and by job group.
+     * @param jobName The job name to search for.
+     * @param jobGroup The job group to search for.
+     * @return A list of triggers.
+     * @throws SchedulerException
+     */
     List<CronTrigger> findTriggerByJobNameAndGroup(String jobName, String jobGroup) throws SchedulerException;
 
 }
